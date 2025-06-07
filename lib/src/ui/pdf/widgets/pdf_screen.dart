@@ -1,8 +1,6 @@
-import 'dart:io';
-
-import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:flutter/material.dart';
-import 'package:pro_image_editor/pro_image_editor.dart';
+
+import '../viewmodel/pdf_viewmodel.dart';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({super.key});
@@ -12,42 +10,35 @@ class PdfScreen extends StatefulWidget {
 }
 
 class _PdfScreenState extends State<PdfScreen> {
-  List<String> scannedImages = [];
+  late final PdfViewModel _viewModel;
 
-  Future<void> _editImage(String imagePath, int index) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProImageEditor.file(
-          File(imagePath),
-          callbacks: ProImageEditorCallbacks(
-            onImageEditingComplete: (bytes) async {
-              // Сохраняем отредактированное изображение
-              final file = File(imagePath);
-              await file.writeAsBytes(bytes);
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = PdfViewModel();
+    _viewModel.addListener(_onViewModelChanged);
+  }
 
-              // Обновляем UI после сохранения
-              setState(() {
-                // Это заставит виджет Image.file перезагрузить изображение
-              });
+  @override
+  void dispose() {
+    _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
+    super.dispose();
+  }
 
-              // Возвращаемся назад
-              Navigator.pop(context, true);
-            },
-            onCloseEditor: () {
-              // Просто закрываем редактор без сохранения
-              Navigator.pop(context, false);
-            },
-          ),
-        ),
-      ),
-    );
+  void _onViewModelChanged() {
+    setState(() {});
+  }
 
-    // Если результат редактирования успешный, обновляем UI (может быть избыточным, если setState выше уже сработал)
-    if (result == true) {
-      setState(() {
-        // Обновляем UI для отображения изменений
-      });
+  Future<void> _scanDocument() async {
+    try {
+      await _viewModel.scanDocument();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка сканирования: $e')),
+        );
+      }
     }
   }
 
@@ -61,25 +52,25 @@ class _PdfScreenState extends State<PdfScreen> {
       body: Column(
         children: [
           ElevatedButton(
-            onPressed: () async {
-              try {
-                final imagesPath = await CunningDocumentScanner.getPictures();
-                if (imagesPath != null && imagesPath.isNotEmpty) {
-                  setState(() {
-                    scannedImages = imagesPath;
-                  });
-                }
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Ошибка сканирования: $e')),
-                );
-              }
-            },
-            child: Text("Сканировать документ"),
+            onPressed: _viewModel.isLoading ? null : _scanDocument,
+            child: _viewModel.isLoading
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      SizedBox(width: 8),
+                      Text("Сканирование..."),
+                    ],
+                  )
+                : Text("Сканировать документ"),
           ),
           SizedBox(height: 16),
           Expanded(
-            child: scannedImages.isEmpty
+            child: !_viewModel.hasImages
                 ? Center(
                     child: Text(
                       'Нет отсканированных изображений',
@@ -87,7 +78,7 @@ class _PdfScreenState extends State<PdfScreen> {
                     ),
                   )
                 : ListView.builder(
-                    itemCount: scannedImages.length,
+                    itemCount: _viewModel.scannedImages.length,
                     itemBuilder: (context, index) {
                       return Card(
                         margin: EdgeInsets.all(8),
@@ -106,10 +97,20 @@ class _PdfScreenState extends State<PdfScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () =>
-                                        _editImage(scannedImages[index], index),
-                                    child: Text('Edit'),
+                                  Row(
+                                    children: [
+                                      if (_viewModel.isImageEdited(index))
+                                        Icon(Icons.edit,
+                                            color: Colors.green, size: 20),
+                                      SizedBox(width: 8),
+                                      ElevatedButton(
+                                        onPressed: () => _viewModel.editImage(
+                                            context,
+                                            _viewModel.scannedImages[index],
+                                            index),
+                                        child: Text('Edit'),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -118,10 +119,7 @@ class _PdfScreenState extends State<PdfScreen> {
                               height: 300,
                               width: double.infinity,
                               padding: EdgeInsets.all(8),
-                              child: Image.file(
-                                File(scannedImages[index]),
-                                fit: BoxFit.contain,
-                              ),
+                              child: _viewModel.buildImageWidget(index),
                             ),
                           ],
                         ),
