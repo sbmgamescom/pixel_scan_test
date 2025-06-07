@@ -1,40 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pixel_scan_test/src/core/services/revenue_cat_service.dart';
-import 'package:pixel_scan_test/src/ui/onboarding/widgets/onboarding_screen.dart';
-import 'package:pixel_scan_test/src/ui/pdf/widgets/pdf_screen.dart';
-import 'package:pixel_scan_test/src/ui/subscription/viewmodel/subscription_viewmodel.dart';
-import 'package:pixel_scan_test/src/ui/subscription/widgets/paywall_screen.dart';
-import 'package:provider/provider.dart';
+
+import '../../ui/paywall/paywall_screen.dart';
+import '../../ui/pdf/widgets/pdf_screen.dart';
 
 class AppRouter {
-  static final RevenueCatService _revenueCatService = RevenueCatService();
-
   static final GoRouter router = GoRouter(
-    initialLocation: '/onboarding',
+    initialLocation: '/home',
     routes: [
-      GoRoute(
-        path: '/onboarding',
-        name: 'onboarding',
-        builder: (context, state) => OnboardingScreen(
-          onCompleted: () {
-            context.go('/home');
-          },
-        ),
-      ),
       GoRoute(
         path: '/home',
         name: 'home',
         builder: (context, state) => const PdfScreen(),
-        redirect: (context, state) {
-          // Проверяем, нужно ли показать paywall при запуске приложения
-          final subscriptionViewModel = context.read<SubscriptionViewModel>();
-          if (subscriptionViewModel.shouldShowPaywall()) {
-            // Можно добавить логику показа paywall при определенных условиях
-            return null; // Пока позволяем переход
-          }
-          return null;
-        },
       ),
       GoRoute(
         path: '/paywall',
@@ -42,13 +19,7 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
           return PaywallScreen(
-            title: extra?['title'] ?? 'Перейти на Премиум',
-            subtitle: extra?['subtitle'] ?? 'Разблокируйте все возможности',
-            showSkipButton: extra?['showSkipButton'] ?? false,
-            onPurchaseSuccess: () {
-              context.pop();
-            },
-            onSkip: extra?['onSkip'],
+            source: extra?['source'] ?? 'unknown',
           );
         },
       ),
@@ -84,10 +55,4 @@ class AppRouter {
       ),
     ),
   );
-
-  static Future<void> initializeRevenueCat() async {
-    await _revenueCatService.initialize();
-  }
-
-  static RevenueCatService get revenueCatService => _revenueCatService;
 }

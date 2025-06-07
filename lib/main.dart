@@ -1,17 +1,156 @@
 import 'package:flutter/material.dart';
-import 'package:pixel_scan_test/src/ui/pdf/widgets/pdf_screen.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MainApp());
+import 'src/core/models/subscription_models.dart';
+import 'src/core/services/subscription_service.dart';
+import 'src/ui/paywall/paywall_screen.dart';
+import 'src/ui/pdf/widgets/pdf_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final subscriptionService = SubscriptionService();
+  await subscriptionService.initialize();
+
+  runApp(MyApp(subscriptionService: subscriptionService));
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  final SubscriptionService subscriptionService;
+
+  const MyApp({super.key, required this.subscriptionService});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: PdfScreen(),
+    return MultiProvider(
+      providers: [
+        Provider<SubscriptionService>.value(value: subscriptionService),
+        StreamProvider<UserSubscriptionInfo>(
+          create: (_) => subscriptionService.subscriptionStream,
+          initialData: subscriptionService.currentSubscriptionInfo,
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Pixel Scan Test',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          useMaterial3: true,
+        ),
+        home: const MainScreen(),
+      ),
+    );
+  }
+}
+
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserSubscriptionInfo>(
+      builder: (context, userInfo, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Pixel Scanner'),
+            backgroundColor: userInfo.isPremium ? Colors.amber : Colors.blue,
+            actions: [
+              IconButton(
+                icon: Icon(
+                  userInfo.isPremium ? Icons.star : Icons.star_border,
+                  color: userInfo.isPremium ? Colors.orange : Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PaywallScreen(source: 'main'),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  userInfo.isPremium ? Icons.star : Icons.star_border,
+                  size: 100,
+                  color: userInfo.isPremium ? Colors.amber : Colors.grey,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  userInfo.isPremium ? 'Premium User ⭐' : 'Free User',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: userInfo.isPremium ? Colors.amber : Colors.grey[600],
+                  ),
+                ),
+                if (userInfo.isPremium && userInfo.expirationDate != null)
+                  Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text(
+                      'Expires: ${userInfo.expirationDate!.day}/${userInfo.expirationDate!.month}/${userInfo.expirationDate!.year}',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  ),
+                SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PdfScreen()),
+                    );
+                  },
+                  child: Text('Start Scanning'),
+                ),
+                if (!userInfo.isPremium) ...[
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaywallScreen(source: 'main'),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: Text('Upgrade to Premium'),
+                  ),
+                ],
+                SizedBox(height: 20),
+                // Тестовые кнопки
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        context.read<SubscriptionService>().simulatePremium();
+                      },
+                      child: Text('Test Premium'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        context
+                            .read<SubscriptionService>()
+                            .simulateNonPremium();
+                      },
+                      child: Text('Test Free'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

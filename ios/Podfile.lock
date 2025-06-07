@@ -8,12 +8,12 @@ PODS:
   - Flutter (1.0.0)
   - permission_handler_apple (9.3.0):
     - Flutter
-  - purchases_flutter (7.0.2):
+  - purchases_flutter (8.10.1):
     - Flutter
-    - PurchasesHybridCommon (= 13.0.1)
-  - PurchasesHybridCommon (13.0.1):
-    - RevenueCat (= 5.2.3)
-  - RevenueCat (5.2.3)
+    - PurchasesHybridCommon (= 13.35.0)
+  - PurchasesHybridCommon (13.35.0):
+    - RevenueCat (= 5.27.1)
+  - RevenueCat (5.27.1)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -59,9 +59,9 @@ SPEC CHECKSUMS:
   emoji_picker_flutter: ece213fc274bdddefb77d502d33080dc54e616cc
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
-  purchases_flutter: 397bd6485f4e34be48901895e820018bf2183ca4
-  PurchasesHybridCommon: 6e5772e574ce345922c42f31403cf72a0ba762bf
-  RevenueCat: 86e4486345a6f7740fecb1eeff91eeff8708eee1
+  purchases_flutter: 7cf9cb2f7608e31c3d7db9a6896e12076655b38b
+  PurchasesHybridCommon: 18288b8ad932cfeb5f142f592d5c65e626a35770
+  RevenueCat: 87171c9f2412778354c8523f5625d1fece2560a5
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
   vibration: 69774ad57825b11c951ee4c46155f455d7a592ce
 
