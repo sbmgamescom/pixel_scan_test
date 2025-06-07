@@ -11,12 +11,22 @@ class PdfViewModel extends ChangeNotifier {
 
   DocumentModel? _document;
   bool _isLoading = false;
+  int _currentPageIndex = 0;
 
   DocumentModel? get document => _document;
   List<String> get scannedImages => _document?.imagePaths ?? [];
   Map<int, Uint8List?> get editedImages => _document?.editedImages ?? {};
   bool get isLoading => _isLoading;
   bool get hasImages => _document?.hasImages ?? false;
+  int get currentPageIndex => _currentPageIndex;
+  int get totalPages => scannedImages.length;
+
+  void setCurrentPage(int index) {
+    if (index >= 0 && index < totalPages) {
+      _currentPageIndex = index;
+      notifyListeners();
+    }
+  }
 
   void _setLoading(bool loading) {
     _isLoading = loading;
@@ -33,6 +43,7 @@ class PdfViewModel extends ChangeNotifier {
           name: 'Document ${DateTime.now().day}/${DateTime.now().month}',
           imagePaths: imagesPath,
         );
+        _currentPageIndex = 0; // Сбрасываем на первую страницу
         notifyListeners();
       }
     } catch (e) {
@@ -86,5 +97,35 @@ class PdfViewModel extends ChangeNotifier {
       index: index,
       editedImageBytes: _document!.editedImages[index],
     );
+  }
+
+  Future<void> addPages() async {
+    try {
+      _setLoading(true);
+      final newImagesPath = await _repository.scanDocuments();
+      if (newImagesPath != null && newImagesPath.isNotEmpty) {
+        if (_document != null) {
+          // Добавляем новые страницы к существующему документу
+          final updatedImagePaths = [
+            ..._document!.imagePaths,
+            ...newImagesPath
+          ];
+          _document = _document!.copyWith(imagePaths: updatedImagePaths);
+        } else {
+          // Создаем новый документ, если его еще нет
+          _document = DocumentModel(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            name: 'Document ${DateTime.now().day}/${DateTime.now().month}',
+            imagePaths: newImagesPath,
+          );
+          _currentPageIndex = 0;
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow; // Пробрасываем ошибку для обработки в UI
+    } finally {
+      _setLoading(false);
+    }
   }
 }
