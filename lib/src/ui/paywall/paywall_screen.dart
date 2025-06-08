@@ -112,13 +112,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('No Active Subscriptions'),
+            title: Text('Активные подписки не найдены'),
             content: Text(
-                'We couldn\'t find any active subscriptions to restore. Please make a new purchase.'),
+                'Мы не смогли найти активные подписки для восстановления. Пожалуйста, оформите новую подписку или убедитесь, что вы используете тот же Apple ID.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: Text('Понятно'),
               ),
             ],
           ),
@@ -128,7 +128,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Restore failed: $e'),
+            content: Text('Ошибка восстановления: $e'),
             backgroundColor: Colors.red,
           ),
         );

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../core/services/subscription_service.dart';
+import '../../paywall/paywall_screen.dart';
 import '../viewmodel/pdf_viewmodel.dart';
 
 class PdfScreen extends StatefulWidget {
@@ -57,6 +60,65 @@ class _PdfScreenState extends State<PdfScreen> {
     }
   }
 
+  void _printDocument(BuildContext context) {
+    final subscriptionService = context.read<SubscriptionService>();
+    if (subscriptionService.isPremiumUser) {
+      _showPrintDialog();
+    } else {
+      _showPaywallForFeature('print');
+    }
+  }
+
+  void _shareDocument(BuildContext context) {
+    final subscriptionService = context.read<SubscriptionService>();
+    if (subscriptionService.isPremiumUser) {
+      _showShareDialog();
+    } else {
+      _showPaywallForFeature('share');
+    }
+  }
+
+  void _showPaywallForFeature(String feature) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaywallScreen(source: feature),
+      ),
+    );
+  }
+
+  void _showPrintDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Печать документа'),
+        content: const Text('Функция печати будет реализована позже.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showShareDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Поделиться документом'),
+        content: const Text('Функция поделиться будет реализована позже.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +129,18 @@ class _PdfScreenState extends State<PdfScreen> {
             : 'Document 1'),
         actions: [
           if (_viewModel.hasImages) ...[
+            // Кнопка печати
+            IconButton(
+              icon: const Icon(Icons.print),
+              onPressed: () => _printDocument(context),
+              tooltip: 'Печать',
+            ),
+            // Кнопка поделиться
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: () => _shareDocument(context),
+              tooltip: 'Поделиться',
+            ),
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: _viewModel.isLoading ? null : _addPages,

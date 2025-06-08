@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/core/models/subscription_models.dart';
 import 'src/core/services/subscription_service.dart';
+import 'src/ui/onboarding/onboarding_screen.dart';
 import 'src/ui/paywall/paywall_screen.dart';
 import 'src/ui/pdf/widgets/pdf_screen.dart';
 
@@ -42,8 +44,68 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  bool _hasShownLaunchPaywall = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Проверяем первый запуск и показываем соответствующий экран
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkFirstLaunchAndShowScreen();
+    });
+  }
+
+  Future<void> _checkFirstLaunchAndShowScreen() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isFirstLaunch = prefs.getBool('is_first_launch') ?? true;
+
+    if (isFirstLaunch) {
+      // Первый запуск - показываем onboarding
+      await prefs.setBool('is_first_launch', false);
+      _showOnboarding();
+    } else {
+      // Не первый запуск - показываем paywall для не-премиум пользователей
+      _checkAndShowLaunchPaywall();
+    }
+  }
+
+  void _showOnboarding() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OnboardingScreen(
+          onCompleted: () {
+            Navigator.pop(context); // Закрываем onboarding
+          },
+        ),
+      ),
+    );
+  }
+
+  void _checkAndShowLaunchPaywall() {
+    final subscriptionService = context.read<SubscriptionService>();
+    if (!subscriptionService.isPremiumUser && !_hasShownLaunchPaywall) {
+      _hasShownLaunchPaywall = true;
+      _showLaunchPaywall();
+    }
+  }
+
+  void _showLaunchPaywall() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaywallScreen(source: 'launch'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +187,22 @@ class MainScreen extends StatelessWidget {
                     child: Text('Upgrade to Premium'),
                   ),
                 ],
+
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OnboardingScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text('Onboarding to Premium'),
+                ),
                 SizedBox(height: 20),
                 // Тестовые кнопки
                 Row(

@@ -1,6 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:developer' as dev;
 import 'dart:math';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/subscription_models.dart';
 
@@ -26,14 +28,55 @@ class SubscriptionService {
   Future<void> initialize() async {
     await Future.delayed(Duration(milliseconds: 500));
 
-    // Симуляция проверки сохраненной подписки
-    _checkSavedSubscription();
+    // Загружаем сохраненное состояние подписки
+    await _loadSubscriptionState();
     _subscriptionController.add(currentSubscriptionInfo);
   }
 
-  void _checkSavedSubscription() {
-    // Здесь можно добавить проверку SharedPreferences
-    // Пока просто симулируем
+  Future<void> _loadSubscriptionState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _isPremium = prefs.getBool('isPremium') ?? false;
+      _activeProductId = prefs.getString('activeProductId');
+
+      final expirationMillis = prefs.getInt('expirationDate');
+      if (expirationMillis != null) {
+        _expirationDate = DateTime.fromMillisecondsSinceEpoch(expirationMillis);
+
+        // Проверяем, не истекла ли подписка
+        if (_expirationDate != null &&
+            _expirationDate!.isBefore(DateTime.now())) {
+          _isPremium = false;
+          _activeProductId = null;
+          _expirationDate = null;
+          await _saveSubscriptionState(); // Очищаем истекшую подписку
+        }
+      }
+    } catch (e) {
+      dev.log('Ошибка загрузки состояния подписки: $e');
+    }
+  }
+
+  Future<void> _saveSubscriptionState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isPremium', _isPremium);
+
+      if (_activeProductId != null) {
+        await prefs.setString('activeProductId', _activeProductId!);
+      } else {
+        await prefs.remove('activeProductId');
+      }
+
+      if (_expirationDate != null) {
+        await prefs.setInt(
+            'expirationDate', _expirationDate!.millisecondsSinceEpoch);
+      } else {
+        await prefs.remove('expirationDate');
+      }
+    } catch (e) {
+      dev.log('Ошибка сохранения состояния подписки: $e');
+    }
   }
 
   Future<List<SubscriptionModel>> getAvailableProducts() async {
@@ -85,6 +128,7 @@ class SubscriptionService {
       _activeProductId = productId;
       _expirationDate = _calculateExpirationDate(productId);
 
+      await _saveSubscriptionState(); // Сохраняем состояние
       _subscriptionController.add(currentSubscriptionInfo);
       return true;
     } else {
@@ -118,6 +162,7 @@ class SubscriptionService {
       _activeProductId = 'yearly_premium'; // Симуляция найденной подписки
       _expirationDate = DateTime.now().add(Duration(days: 300));
 
+      await _saveSubscriptionState(); // Сохраняем состояние
       _subscriptionController.add(currentSubscriptionInfo);
       return true;
     } else {
@@ -132,24 +177,27 @@ class SubscriptionService {
   }
 
   // Методы для тестирования
-  void simulatePremium() {
+  void simulatePremium() async {
     _isPremium = true;
     _activeProductId = 'yearly_premium';
     _expirationDate = DateTime.now().add(Duration(days: 365));
+    await _saveSubscriptionState();
     _subscriptionController.add(currentSubscriptionInfo);
   }
 
-  void simulateNonPremium() {
+  void simulateNonPremium() async {
     _isPremium = false;
     _activeProductId = null;
     _expirationDate = null;
+    await _saveSubscriptionState();
     _subscriptionController.add(currentSubscriptionInfo);
   }
 
-  void reset() {
+  void reset() async {
     _isPremium = false;
     _activeProductId = null;
     _expirationDate = null;
+    await _saveSubscriptionState();
     _subscriptionController.add(currentSubscriptionInfo);
   }
 }
