@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pixel_scan_test/src/components/loading_overlay.dart';
 import 'package:pixel_scan_test/src/core/config/icons.dart';
 import 'package:pixel_scan_test/src/core/config/images.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../core/services/subscription_service.dart';
 import '../viewmodel/onboarding_viewmodel.dart';
@@ -67,121 +69,126 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _viewModel,
-      child: Consumer<OnboardingViewModel>(
-        builder: (context, viewModel, child) {
-          return Scaffold(
-            body: SafeArea(
-              child: Column(
-                children: [
-                  SizedBox(height: 40),
-                  // Контент страниц (прокручиваемая область)
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        // Фоновое SVG изображение
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: SvgPicture.asset(
-                            AppImages.onboardingBg,
-                            width: 184.57,
-                            height: 281.49,
-                            fit: BoxFit.contain,
+    return LoadingOverlay(
+      isLoading: _isLoading,
+      child: ChangeNotifierProvider.value(
+        value: _viewModel,
+        child: Consumer<OnboardingViewModel>(
+          builder: (context, viewModel, child) {
+            return Scaffold(
+              body: SafeArea(
+                child: Column(
+                  children: [
+                    SizedBox(height: 40),
+                    // Контент страниц (прокручиваемая область)
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          // Фоновое SVG изображение
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: SvgPicture.asset(
+                              AppImages.onboardingBg,
+                              width: 184.57,
+                              height: 281.49,
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                        ),
 
-                        PageView.builder(
-                          controller: viewModel.pageController,
-                          scrollDirection: Axis.vertical,
-                          onPageChanged: (index) =>
-                              viewModel.setCurrentPage(index),
-                          itemCount: viewModel.totalPages,
-                          itemBuilder: (context, index) {
-                            if (index == viewModel.onboardingPages.length) {
-                              return PaywallPageWidget(
-                                onPurchaseSuccess: () {
-                                  Navigator.pop(context, true);
-                                  if (widget.onCompleted != null) {
-                                    widget.onCompleted!();
-                                  }
-                                },
+                          PageView.builder(
+                            controller: viewModel.pageController,
+                            scrollDirection: Axis.vertical,
+                            physics: NeverScrollableScrollPhysics(),
+                            onPageChanged: (index) =>
+                                viewModel.setCurrentPage(index),
+                            itemCount: viewModel.totalPages,
+                            itemBuilder: (context, index) {
+                              if (index == viewModel.onboardingPages.length) {
+                                return PaywallPageWidget(
+                                  onPurchaseSuccess: () {
+                                    Navigator.pop(context, true);
+                                    if (widget.onCompleted != null) {
+                                      widget.onCompleted!();
+                                    }
+                                  },
+                                );
+                              }
+
+                              final pageData = viewModel.onboardingPages[index];
+                              return OnboardingPageWidget(
+                                pageData: pageData,
+                                pageIndex: index,
                               );
-                            }
+                            },
+                          ),
 
-                            final pageData = viewModel.onboardingPages[index];
-                            return OnboardingPageWidget(
-                              pageData: pageData,
-                              pageIndex: index,
-                            );
-                          },
-                        ),
-
-                        // Фиксированные индикаторы страниц
-                        Positioned(
-                          left: 28,
-                          top: 5,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              viewModel.totalPages,
-                              (index) => Container(
-                                margin: const EdgeInsets.symmetric(vertical: 4),
-                                height:
-                                    viewModel.currentPage == index ? 32 : 12,
-                                width: 5,
-                                decoration: BoxDecoration(
-                                  color: viewModel.currentPage == index
-                                      ? Color(0xFFFD1524)
-                                      : Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(4),
+                          // Фиксированные индикаторы страниц
+                          Positioned(
+                            left: 28,
+                            top: 5,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                viewModel.totalPages,
+                                (index) => Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  height:
+                                      viewModel.currentPage == index ? 32 : 12,
+                                  width: 5,
+                                  decoration: BoxDecoration(
+                                    color: viewModel.currentPage == index
+                                        ? Color(0xFFFD1524)
+                                        : Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        if (viewModel.isPaywallPage) ...[
-                          Positioned(
-                            left: 20,
-                            right: 20,
-                            bottom: 0,
-                            child: Column(
-                              children: [
-                                pricingItem(
-                                  isSelected: viewModel.selectedPrice == 0,
-                                  title: 'Week',
-                                  subtitle: '3-Day Free Trial',
-                                  price: "1.99\$",
-                                  onTap: () {
-                                    viewModel.selectPrice(0);
-                                  },
-                                ),
-                                SizedBox(height: 16),
-                                pricingItem(
-                                  isSelected: viewModel.selectedPrice == 1,
-                                  title: 'Year',
-                                  subtitle: null,
-                                  price: "10.99\$",
-                                  onTap: () {
-                                    viewModel.selectPrice(1);
-                                  },
-                                ),
-                              ],
-                            ),
-                          )
+                          if (viewModel.isPaywallPage) ...[
+                            Positioned(
+                              left: 20,
+                              right: 20,
+                              bottom: 0,
+                              child: Column(
+                                children: [
+                                  pricingItem(
+                                    isSelected: viewModel.selectedPrice == 0,
+                                    title: 'Week',
+                                    subtitle: '3-Day Free Trial',
+                                    price: "1.99\$",
+                                    onTap: () {
+                                      viewModel.selectPrice(0);
+                                    },
+                                  ),
+                                  SizedBox(height: 16),
+                                  pricingItem(
+                                    isSelected: viewModel.selectedPrice == 1,
+                                    title: 'Year',
+                                    subtitle: null,
+                                    price: "10.99\$",
+                                    onTap: () {
+                                      viewModel.selectPrice(1);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
 
-                  // Фиксированная нижняя панель
-                  _buildBottomPanel(viewModel),
-                ],
+                    // Фиксированная нижняя панель
+                    _buildBottomPanel(viewModel),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -315,38 +322,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 elevation: 0,
               ),
-              child:
-                  viewModel.currentPage == viewModel.onboardingPages.length &&
-                          _isLoading
-                      ? SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              viewModel.currentPage ==
-                                      viewModel.onboardingPages.length
-                                  ? 'Start Free Trial'
-                                  : 'Continue',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            SvgPicture.asset(
-                              AppIcons.arrowRight,
-                              // size: 20,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    viewModel.currentPage == viewModel.onboardingPages.length
+                        ? 'Start Free Trial'
+                        : 'Continue',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  SvgPicture.asset(
+                    AppIcons.arrowRight,
+                    // size: 20,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -361,8 +356,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Text(
                   'Restore',
                   style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
+                    color: Color(0xff8B7979),
+                    fontSize: 15,
                   ),
                 ),
               ),
@@ -372,50 +367,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 color: Colors.grey[400],
               ),
               TextButton(
-                onPressed: () {
-                  // Privacy policy
+                onPressed: () async {
+                  await launchUrlString('https://google.com');
                 },
                 child: Text(
                   'Privacy',
                   style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
+                    color: Color(0xff8B7979),
+                    fontSize: 15,
                   ),
                 ),
               ),
               Container(
                 width: 1,
                 height: 16,
-                color: Colors.grey[400],
+                color: Color(0xff8B7979),
               ),
               TextButton(
-                onPressed: () {
-                  // Terms
+                onPressed: () async {
+                  await launchUrlString('https://google.com');
                 },
                 child: Text(
                   'Terms',
                   style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
+                    color: Color(0xff8B7979),
+                    fontSize: 15,
                   ),
                 ),
               ),
             ],
           ),
-
-          SizedBox(height: 8),
-
-          // Индикатор внизу (как на iPhone)
-          Container(
-            width: 134,
-            height: 5,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(2.5),
-            ),
-          ),
-
-          SizedBox(height: 10),
+          SizedBox(height: 20),
         ],
       ],
     );

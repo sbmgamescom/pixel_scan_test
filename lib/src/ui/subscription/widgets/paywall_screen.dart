@@ -18,6 +18,7 @@ class PaywallScreen extends StatefulWidget {
     this.showSkipButton = false,
     this.title = 'Перейти на Премиум',
     this.subtitle = 'Разблокируйте все возможности приложения',
+    required String source,
   });
 
   @override

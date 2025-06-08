@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_scan_test/src/core/config/images.dart';
-import 'package:provider/provider.dart';
 
-import '../../../core/services/subscription_service.dart';
 import '../../../core/utils/app_text_styles.dart';
 
 class PaywallPageWidget extends StatefulWidget {
@@ -18,33 +16,6 @@ class PaywallPageWidget extends StatefulWidget {
 }
 
 class _PaywallPageWidgetState extends State<PaywallPageWidget> {
-  String? _selectedProductId;
-  final bool _isLoading = false;
-  bool _isProductsLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProducts();
-  }
-
-  Future<void> _loadProducts() async {
-    final subscriptionService = context.read<SubscriptionService>();
-    try {
-      final products = await subscriptionService.getAvailableProducts();
-      setState(() {
-        _selectedProductId = products
-            .firstWhere((p) => p.isRecommended, orElse: () => products.first)
-            .productId;
-        _isProductsLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isProductsLoading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(

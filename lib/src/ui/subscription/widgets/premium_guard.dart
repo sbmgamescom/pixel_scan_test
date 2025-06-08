@@ -46,6 +46,7 @@ class PremiumGuard extends StatelessWidget {
           onPurchaseSuccess: () {
             // Навигация обратно будет обработана автоматически
           },
+          source: '',
         ),
       ),
     );
@@ -130,6 +131,7 @@ class PremiumFeature extends StatelessWidget {
           title: paywallTitle ?? 'Премиум функция',
           subtitle: paywallSubtitle ??
               'Эта функция доступна только для премиум пользователей',
+          source: '',
         ),
       ),
     );
