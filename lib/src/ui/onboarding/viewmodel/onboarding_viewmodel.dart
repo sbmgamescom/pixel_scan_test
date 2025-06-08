@@ -9,6 +9,7 @@ class OnboardingViewModel extends ChangeNotifier {
   String? _selectedProductId;
   bool _isLoading = false;
   bool _isProductsLoading = true;
+  int selectedPrice = 0;
 
   // Данные страниц онбординга
   final List<OnboardingPageModel> _onboardingPages = [
@@ -30,8 +31,15 @@ class OnboardingViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isProductsLoading => _isProductsLoading;
   List<OnboardingPageModel> get onboardingPages => _onboardingPages;
+
   bool get isLastOnboardingPage => _currentPage == _onboardingPages.length - 1;
+  bool get isPaywallPage => _currentPage == _onboardingPages.length;
   int get totalPages => _onboardingPages.length + 1; // +1 для paywall
+
+  void selectPrice(int value) {
+    selectedPrice = value;
+    notifyListeners();
+  }
 
   // Setters
   void setCurrentPage(int page) {
