@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/utils/app_text_styles.dart';
 import '../models/onboarding_page_model.dart';
 
 class OnboardingPageWidget extends StatelessWidget {
@@ -30,25 +31,16 @@ class OnboardingPageWidget extends StatelessWidget {
                     // Title
                     Text(
                       pageData.title,
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
+                      style: AppTextStyles.blackColor(AppTextStyles.title2),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
 
                     // Subtitle
                     Text(
                       pageData.subtitle,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
-                        height: 1.4,
-                      ),
-                      textAlign: TextAlign.center,
+                      style: AppTextStyles.secondaryColor(AppTextStyles.body1)
+                          .copyWith(fontSize: 20),
                     ),
                   ],
                 ),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pixel_scan_test/src/core/config/icons.dart';
 import 'package:pixel_scan_test/src/core/config/images.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/services/subscription_service.dart';
-import 'viewmodel/onboarding_viewmodel.dart';
-import 'widgets/onboarding_page_widget.dart';
+import '../../../core/services/subscription_service.dart';
+import '../viewmodel/onboarding_viewmodel.dart';
+import 'onboarding_page_widget.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final VoidCallback? onCompleted;
@@ -77,60 +78,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             body: SafeArea(
               child: Column(
                 children: [
-                  // Верхняя панель с кнопкой пропуска
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const SizedBox(width: 60),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '${viewModel.currentPage + 1} / ${viewModel.totalPages}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        if (viewModel.currentPage <
-                            viewModel.onboardingPages.length)
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () => viewModel.skipToPaywall(),
-                              icon: Icon(
-                                Icons.close,
-                                size: 16,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          )
-                        else
-                          const SizedBox(width: 60),
-                      ],
-                    ),
-                  ),
-
+                  SizedBox(height: 40),
                   // Контент страниц (прокручиваемая область)
                   Expanded(
                     child: Stack(
                       children: [
                         // Фоновое SVG изображение
                         Positioned(
-                          top: 96,
+                          top: 0,
                           right: 0,
                           child: SvgPicture.asset(
                             AppImages.onboardingBg,
@@ -162,18 +117,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         // Фиксированные индикаторы страниц
                         Positioned(
                           left: 28,
-                          top: 0,
+                          top: 5,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: List.generate(
                               viewModel.totalPages,
                               (index) => Container(
                                 margin: const EdgeInsets.symmetric(vertical: 4),
-                                height: viewModel.currentPage == index ? 20 : 8,
-                                width: 8,
+                                height:
+                                    viewModel.currentPage == index ? 32 : 12,
+                                width: 5,
                                 decoration: BoxDecoration(
                                   color: viewModel.currentPage == index
-                                      ? Color(0xFFE53E3E)
+                                      ? Color(0xFFFD1524)
                                       : Colors.grey[300],
                                   borderRadius: BorderRadius.circular(4),
                                 ),
@@ -201,54 +157,60 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Кнопка Continue
-        Container(
-          width: double.infinity,
-          height: 56,
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: ElevatedButton(
-            onPressed: viewModel.currentPage == viewModel.onboardingPages.length
-                ? (_isLoading ? null : _purchaseSelected)
-                : (viewModel.isLastOnboardingPage
-                    ? () => viewModel.goToPaywall()
-                    : () => viewModel.nextPage()),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFE53E3E),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 40.0),
+          child: Container(
+            width: double.infinity,
+            height: 56,
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: ElevatedButton(
+              onPressed:
+                  viewModel.currentPage == viewModel.onboardingPages.length
+                      ? (_isLoading ? null : _purchaseSelected)
+                      : (viewModel.isLastOnboardingPage
+                          ? () => viewModel.goToPaywall()
+                          : () => viewModel.nextPage()),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFFD1524),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                elevation: 0,
               ),
-              elevation: 0,
-            ),
-            child: viewModel.currentPage == viewModel.onboardingPages.length &&
-                    _isLoading
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        viewModel.currentPage ==
-                                viewModel.onboardingPages.length
-                            ? 'Start Free Trial'
-                            : 'Continue',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+              child:
+                  viewModel.currentPage == viewModel.onboardingPages.length &&
+                          _isLoading
+                      ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              viewModel.currentPage ==
+                                      viewModel.onboardingPages.length
+                                  ? 'Start Free Trial'
+                                  : 'Continue',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            SvgPicture.asset(
+                              AppIcons.arrowRight,
+                              // size: 20,
+                              color: Colors.white,
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: 12),
-                      Icon(
-                        Icons.arrow_forward,
-                        size: 20,
-                      ),
-                    ],
-                  ),
+            ),
           ),
         ),
 

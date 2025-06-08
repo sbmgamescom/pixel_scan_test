@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/core/models/subscription_models.dart';
 import 'src/core/services/subscription_service.dart';
-import 'src/ui/onboarding/onboarding_screen.dart';
+import 'src/ui/onboarding/widgets/onboarding_screen.dart';
 import 'src/ui/paywall/paywall_screen.dart';
 import 'src/ui/pdf/widgets/pdf_screen.dart';
 
@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           useMaterial3: true,
+          fontFamily: 'SF Pro Display', // Статический SF Pro шрифт
         ),
         home: const MainScreen(),
       ),
