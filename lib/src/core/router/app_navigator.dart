@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppNavigator extends ChangeNotifier {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  
+
   String _currentRoute = '/home';
 
   String get currentRoute => _currentRoute;

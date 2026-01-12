@@ -21,6 +21,13 @@ class PdfViewModel extends ChangeNotifier {
   int get currentPageIndex => _currentPageIndex;
   int get totalPages => scannedImages.length;
 
+  /// Загрузить существующий документ
+  void loadDocument(DocumentModel document) {
+    _document = document;
+    _currentPageIndex = 0;
+    notifyListeners();
+  }
+
   void setCurrentPage(int index) {
     if (index >= 0 && index < totalPages) {
       _currentPageIndex = index;
@@ -40,14 +47,14 @@ class PdfViewModel extends ChangeNotifier {
       if (imagesPath != null && imagesPath.isNotEmpty) {
         _document = DocumentModel(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Document ${DateTime.now().day}/${DateTime.now().month}',
+          name: 'Документ ${DateTime.now().day}.${DateTime.now().month}',
           imagePaths: imagesPath,
         );
-        _currentPageIndex = 0; // Сбрасываем на первую страницу
+        _currentPageIndex = 0;
         notifyListeners();
       }
     } catch (e) {
-      rethrow; // Пробрасываем ошибку для обработки в UI
+      rethrow;
     } finally {
       _setLoading(false);
     }
@@ -66,10 +73,8 @@ class PdfViewModel extends ChangeNotifier {
   Future<void> _saveEditedImage(
       String imagePath, int index, Uint8List bytes) async {
     try {
-      // Сохраняем отредактированное изображение в файл
       await _repository.saveEditedImage(imagePath, bytes);
 
-      // Обновляем модель документа
       if (_document != null) {
         final updatedEditedImages =
             Map<int, Uint8List?>.from(_document!.editedImages);
@@ -105,17 +110,15 @@ class PdfViewModel extends ChangeNotifier {
       final newImagesPath = await _repository.scanDocuments();
       if (newImagesPath != null && newImagesPath.isNotEmpty) {
         if (_document != null) {
-          // Добавляем новые страницы к существующему документу
           final updatedImagePaths = [
             ..._document!.imagePaths,
             ...newImagesPath
           ];
           _document = _document!.copyWith(imagePaths: updatedImagePaths);
         } else {
-          // Создаем новый документ, если его еще нет
           _document = DocumentModel(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
-            name: 'Document ${DateTime.now().day}/${DateTime.now().month}',
+            name: 'Документ ${DateTime.now().day}.${DateTime.now().month}',
             imagePaths: newImagesPath,
           );
           _currentPageIndex = 0;
@@ -123,9 +126,51 @@ class PdfViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      rethrow; // Пробрасываем ошибку для обработки в UI
+      rethrow;
     } finally {
       _setLoading(false);
+    }
+  }
+
+  /// Удалить страницу
+  void removePage(int index) {
+    if (_document != null && _document!.pageCount > 1) {
+      _document = _document!.removePage(index);
+
+      // Корректируем текущий индекс
+      if (_currentPageIndex >= _document!.pageCount) {
+        _currentPageIndex = _document!.pageCount - 1;
+      }
+
+      notifyListeners();
+    }
+  }
+
+  /// Переместить страницу
+  void movePage(int oldIndex, int newIndex) {
+    if (_document != null) {
+      _document = _document!.movePage(oldIndex, newIndex);
+
+      // Корректируем текущий индекс
+      if (_currentPageIndex == oldIndex) {
+        _currentPageIndex = newIndex;
+      } else if (oldIndex < _currentPageIndex &&
+          newIndex >= _currentPageIndex) {
+        _currentPageIndex--;
+      } else if (oldIndex > _currentPageIndex &&
+          newIndex <= _currentPageIndex) {
+        _currentPageIndex++;
+      }
+
+      notifyListeners();
+    }
+  }
+
+  /// Переименовать документ
+  void renameDocument(String newName) {
+    if (_document != null) {
+      _document = _document!.copyWith(name: newName);
+      notifyListeners();
     }
   }
 }

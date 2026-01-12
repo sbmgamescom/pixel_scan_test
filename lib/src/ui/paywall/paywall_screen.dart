@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../core/models/subscription_models.dart';
 import '../../core/services/subscription_service.dart';
@@ -58,26 +59,26 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
       if (success && mounted) {
         Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('🎉 Welcome to Premium!'),
-            backgroundColor: Colors.green,
+        ShadToaster.of(context).show(
+          const ShadToast(
+            title: Text('🎉 Добро пожаловать в Premium!'),
+            description: Text('Теперь вам доступны все функции'),
           ),
         );
       } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Purchase failed. Please try again.'),
-            backgroundColor: Colors.red,
+        ShadToaster.of(context).show(
+          const ShadToast.destructive(
+            title: Text('Ошибка'),
+            description: Text('Покупка не удалась. Попробуйте ещё раз.'),
           ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Ошибка'),
+            description: Text('Ошибка: $e'),
           ),
         );
       }
@@ -100,23 +101,28 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
       if (success && mounted) {
         Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('✅ Purchases restored successfully!'),
-            backgroundColor: Colors.green,
+        ShadToaster.of(context).show(
+          const ShadToast(
+            title: Text('✅ Покупки восстановлены!'),
+            description: Text('Ваша подписка активирована'),
           ),
         );
       } else if (mounted) {
-        showDialog(
+        showShadDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Активные подписки не найдены'),
-            content: Text(
-                'Мы не смогли найти активные подписки для восстановления. Пожалуйста, оформите новую подписку или убедитесь, что вы используете тот же Apple ID.'),
+          builder: (context) => ShadDialog.alert(
+            title: const Text('Активные подписки не найдены'),
+            description: const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Мы не смогли найти активные подписки для восстановления. '
+                'Пожалуйста, оформите новую подписку или убедитесь, что вы используете тот же Apple ID.',
+              ),
+            ),
             actions: [
-              TextButton(
+              ShadButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Понятно'),
+                child: const Text('Понятно'),
               ),
             ],
           ),
@@ -124,10 +130,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Ошибка восстановления: $e'),
-            backgroundColor: Colors.red,
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Ошибка восстановления'),
+            description: Text('$e'),
           ),
         );
       }
@@ -142,27 +148,45 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ShadTheme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.close, color: Colors.black),
-          onPressed: () => Navigator.pop(context, false),
+      backgroundColor: theme.colorScheme.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Кнопка закрытия
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  ShadIconButton.ghost(
+                    icon: const Icon(LucideIcons.x, size: 24),
+                    onPressed: () => Navigator.pop(context, false),
+                  ),
+                ],
+              ),
+            ),
+
+            // Контент
+            Expanded(
+              child: _isProductsLoading ? _buildLoading() : _buildContent(),
+            ),
+          ],
         ),
       ),
-      body: _isProductsLoading ? _buildLoading() : _buildContent(),
     );
   }
 
   Widget _buildLoading() {
+    final theme = ShadTheme.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 20),
-          Text('Loading subscriptions...'),
+          const ShadProgress(value: null),
+          const SizedBox(height: 20),
+          Text('Загрузка подписок...', style: theme.textTheme.muted),
         ],
       ),
     );
@@ -173,13 +197,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
                 _buildHeader(),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 _buildFeatures(),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 _buildSubscriptionOptions(),
               ],
             ),
@@ -191,37 +215,34 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _buildHeader() {
+    final theme = ShadTheme.of(context);
+
     return Column(
       children: [
+        // Premium icon с градиентом
         Container(
           width: 100,
           height: 100,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.purple, Colors.blue],
+              colors: [Color(0xFF8B5CF6), Color(0xFF3B82F6)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             shape: BoxShape.circle,
           ),
-          child: Icon(Icons.star, size: 50, color: Colors.white),
+          child: const Icon(LucideIcons.crown, size: 50, color: Colors.white),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 24),
         Text(
           'Unlock Premium Features',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
+          style: theme.textTheme.h2,
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 8),
         Text(
           'Get unlimited access to all features',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[600],
-          ),
+          style: theme.textTheme.muted,
           textAlign: TextAlign.center,
         ),
       ],
@@ -229,66 +250,63 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _buildFeatures() {
+    final theme = ShadTheme.of(context);
+
     final features = [
-      {
-        'icon': Icons.camera_alt,
-        'title': 'Unlimited Scanning',
-        'subtitle': 'Scan as many documents as you want'
-      },
-      {
-        'icon': Icons.edit,
-        'title': 'Advanced Editing',
-        'subtitle': 'Full editing suite with filters and effects'
-      },
-      {
-        'icon': Icons.file_download,
-        'title': 'Export Options',
-        'subtitle': 'PDF, JPEG, PNG and more formats'
-      },
-      {
-        'icon': Icons.cloud,
-        'title': 'Cloud Sync',
-        'subtitle': 'Sync across all your devices'
-      },
+      (
+        icon: LucideIcons.scan,
+        title: 'Unlimited Scanning',
+        subtitle: 'Scan as many documents as you want'
+      ),
+      (
+        icon: LucideIcons.penTool,
+        title: 'Advanced Editing',
+        subtitle: 'Full editing suite with filters and effects'
+      ),
+      (
+        icon: LucideIcons.download,
+        title: 'Export Options',
+        subtitle: 'PDF, JPEG, PNG and more formats'
+      ),
+      (
+        icon: LucideIcons.cloud,
+        title: 'Cloud Sync',
+        subtitle: 'Sync across all your devices'
+      ),
     ];
 
     return Column(
       children: features
           .map((feature) => Padding(
-                padding: EdgeInsets.only(bottom: 15),
+                padding: const EdgeInsets.only(bottom: 16),
                 child: Row(
                   children: [
                     Container(
-                      width: 50,
-                      height: 50,
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(25),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        feature['icon'] as IconData,
-                        color: Colors.blue,
-                        size: 25,
+                        feature.icon,
+                        color: theme.colorScheme.primary,
+                        size: 24,
                       ),
                     ),
-                    SizedBox(width: 15),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            feature['title'] as String,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            feature.title,
+                            style: theme.textTheme.p
+                                .copyWith(fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            feature['subtitle'] as String,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
+                            feature.subtitle,
+                            style: theme.textTheme.muted,
                           ),
                         ],
                       ),
@@ -301,106 +319,108 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _buildSubscriptionOptions() {
+    final theme = ShadTheme.of(context);
+
     return Column(
       children: _products.map((product) {
         final isSelected = _selectedProductId == product.productId;
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedProductId = product.productId;
-            });
-          },
-          child: Container(
-            margin: EdgeInsets.only(bottom: 12),
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: isSelected ? Colors.blue : Colors.grey[300]!,
-                width: isSelected ? 2 : 1,
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedProductId = product.productId;
+              });
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.border,
+                  width: isSelected ? 2 : 1,
+                ),
+                borderRadius: theme.radius,
+                color: isSelected
+                    ? theme.colorScheme.primary.withValues(alpha: 0.05)
+                    : theme.colorScheme.card,
               ),
-              borderRadius: BorderRadius.circular(12),
-              color: isSelected ? Colors.blue.withOpacity(0.05) : Colors.white,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected ? Colors.blue : Colors.grey[400]!,
-                      width: 2,
+              child: Row(
+                children: [
+                  // Радио индикатор
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.muted,
+                        width: 2,
+                      ),
+                      color: isSelected
+                          ? theme.colorScheme.primary
+                          : Colors.transparent,
                     ),
-                    color: isSelected ? Colors.blue : Colors.transparent,
+                    child: isSelected
+                        ? const Icon(LucideIcons.check,
+                            size: 14, color: Colors.white)
+                        : null,
                   ),
-                  child: isSelected
-                      ? Icon(Icons.check, size: 16, color: Colors.white)
-                      : null,
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            product.title,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                  const SizedBox(width: 12),
+
+                  // Информация о подписке
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              product.title,
+                              style: theme.textTheme.p
+                                  .copyWith(fontWeight: FontWeight.w600),
                             ),
-                          ),
-                          if (product.isRecommended) ...[
-                            SizedBox(width: 8),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.orange,
-                                borderRadius: BorderRadius.circular(10),
+                            if (product.isRecommended) ...[
+                              const SizedBox(width: 8),
+                              ShadBadge.secondary(
+                                child: const Text('BEST VALUE'),
                               ),
-                              child: Text(
-                                'BEST VALUE',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            ],
                           ],
-                        ],
-                      ),
-                      if (product.trialPeriod != null)
-                        Text(
-                          product.trialPeriod!,
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                        ),
+                        if (product.trialPeriod != null)
+                          Text(
+                            product.trialPeriod!,
+                            style: theme.textTheme.small.copyWith(
+                              color: const Color(0xFF22C55E),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
+                        Text(
+                          product.description,
+                          style: theme.textTheme.muted,
                         ),
-                      Text(
-                        product.description,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Text(
-                  product.price,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.blue : Colors.black,
+
+                  // Цена
+                  Text(
+                    product.price,
+                    style: theme.textTheme.large.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.foreground,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -409,82 +429,64 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _buildFooter() {
+    final theme = ShadTheme.of(context);
     final selectedProduct = _products.firstWhere(
       (p) => p.productId == _selectedProductId,
       orElse: () => _products.first,
     );
 
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: Offset(0, -5),
-          ),
-        ],
+        color: theme.colorScheme.card,
+        border: Border(
+          top: BorderSide(color: theme.colorScheme.border),
+        ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
+          // Кнопка покупки
+          ShadButton(
             width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: _isLoading ? null : _purchaseSelected,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-              child: _isLoading
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text(
-                      selectedProduct.productId == 'yearly_premium'
-                          ? 'Continue'
-                          : 'Start ${selectedProduct.period}ly subscription',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+            enabled: !_isLoading,
+            onPressed: _purchaseSelected,
+            child: _isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
                     ),
-            ),
+                  )
+                : Text(
+                    selectedProduct.productId == 'yearly_premium'
+                        ? 'Continue'
+                        : 'Start ${selectedProduct.period}ly subscription',
+                  ),
           ),
-          SizedBox(height: 10),
-          TextButton(
+          const SizedBox(height: 12),
+
+          // Восстановить покупки
+          ShadButton.ghost(
             onPressed: _isLoading ? null : _restorePurchases,
-            child: Text('Restore Purchases'),
+            child: const Text('Restore Purchases'),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 12),
+
+          // Ссылки
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Privacy Policy',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                  decoration: TextDecoration.underline,
-                ),
+              ShadButton.link(
+                onPressed: () {},
+                child: Text('Privacy Policy', style: theme.textTheme.muted),
               ),
-              Text(' • ', style: TextStyle(color: Colors.grey[600])),
-              Text(
-                'Terms of Service',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                  decoration: TextDecoration.underline,
-                ),
+              Text(' • ', style: theme.textTheme.muted),
+              ShadButton.link(
+                onPressed: () {},
+                child: Text('Terms of Service', style: theme.textTheme.muted),
               ),
             ],
           ),

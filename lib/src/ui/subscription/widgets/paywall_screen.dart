@@ -30,7 +30,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   String? _selectedProductId;
   bool _isPurchasing = false;
   List<dynamic> _availableProducts = [];
-  bool _isLoading = true;
+  final bool _isLoading = true;
   String? _errorMessage;
 
   @override
@@ -463,8 +463,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
     });
 
     try {
-      final success = await widget.subscriptionService
-          .purchaseProduct(_selectedProductId!);
+      final success =
+          await widget.subscriptionService.purchaseProduct(_selectedProductId!);
 
       if (success && mounted) {
         widget.onPurchaseSuccess?.call();

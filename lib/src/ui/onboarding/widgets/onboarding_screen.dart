@@ -132,8 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             children: List.generate(
                               _viewModel.totalPages,
                               (index) => Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 4),
+                                margin: const EdgeInsets.symmetric(vertical: 4),
                                 height:
                                     _viewModel.currentPage == index ? 32 : 12,
                                 width: 5,

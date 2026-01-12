@@ -4,7 +4,10 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
+  pdfx
   permission_handler_windows
+  printing
+  share_plus
   url_launcher_windows
 )
 
