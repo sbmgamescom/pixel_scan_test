@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/document_model.dart';
 import '../../../core/repositories/document_scan_repository.dart';
+import '../../../core/services/document_storage_service.dart';
 import '../../../core/services/image_editing_service.dart';
+import '../../../core/services/pdf_import_service.dart';
 
 class PdfViewModel extends ChangeNotifier {
   final DocumentScanRepository _repository = DocumentScanRepository();
@@ -171,6 +173,94 @@ class PdfViewModel extends ChangeNotifier {
     if (_document != null) {
       _document = _document!.copyWith(name: newName);
       notifyListeners();
+    }
+  }
+
+  /// Добавить страницы из существующего документа
+  Future<void> addPagesFromDocument(DocumentModel sourceDocument) async {
+    try {
+      _setLoading(true);
+      if (_document != null) {
+        final updatedImagePaths = [
+          ..._document!.imagePaths,
+          ...sourceDocument.imagePaths
+        ];
+        _document = _document!.copyWith(imagePaths: updatedImagePaths);
+      } else {
+        // Если документа нет, копируем исходный
+        _document = sourceDocument.copyWith(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+        );
+        _currentPageIndex = 0;
+      }
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Импортировать изображения с устройства
+  Future<void> importImagesFromDevice() async {
+    try {
+      _setLoading(true);
+      final importedDocument = await PdfImportService.importImagesFromDevice();
+      if (importedDocument != null) {
+        if (_document != null) {
+          final updatedImagePaths = [
+            ..._document!.imagePaths,
+            ...importedDocument.imagePaths
+          ];
+          _document = _document!.copyWith(imagePaths: updatedImagePaths);
+        } else {
+          _document = importedDocument.copyWith(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+          );
+          _currentPageIndex = 0;
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Импортировать PDF и добавить страницы
+  Future<void> importPdfPages() async {
+    try {
+      _setLoading(true);
+      final convertedDocument = await PdfImportService.importPdfFromDevice();
+      if (convertedDocument != null) {
+        if (_document != null) {
+          final updatedImagePaths = [
+            ..._document!.imagePaths,
+            ...convertedDocument.imagePaths
+          ];
+          _document = _document!.copyWith(imagePaths: updatedImagePaths);
+        } else {
+          _document = convertedDocument.copyWith(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+          );
+          _currentPageIndex = 0;
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Получить список сохранённых документов
+  Future<List<DocumentModel>> getSavedDocuments() async {
+    try {
+      return await DocumentStorageService.loadAllDocuments();
+    } catch (e) {
+      rethrow;
     }
   }
 }

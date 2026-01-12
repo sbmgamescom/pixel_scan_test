@@ -71,6 +71,9 @@ class _MainScreenState extends State<MainScreen> {
     showShadSheet(
       context: context,
       side: ShadSheetSide.bottom,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) => ShadSheet(
         title: const Text('Добавить документ'),
         description: const Text('Выберите способ добавления документа'),
@@ -144,6 +147,9 @@ class _MainScreenState extends State<MainScreen> {
     showShadSheet(
       context: context,
       side: ShadSheetSide.bottom,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) => ShadSheet(
         title: Text(document.name),
         description:
@@ -368,30 +374,37 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildEmptyState() {
-    return ShadCard(
-      title: const Text('Documents'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 180,
-              child: Image.asset(AppImages.documents),
+    return Center(
+      child: SizedBox(
+        width: double.infinity,
+        child: ShadCard(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: SizedBox(
+                    height: 180,
+                    child: Image.asset(AppImages.documents),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: Text(
+                    'No documents found',
+                    style: ShadTheme.of(context).textTheme.h4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Tap the button below to scan\nor convert to PDF',
+                  style: ShadTheme.of(context).textTheme.muted,
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'No documents found',
-              style: ShadTheme.of(context).textTheme.h4,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Tap the button below to scan\nor convert to PDF',
-              style: ShadTheme.of(context).textTheme.muted,
-              textAlign: TextAlign.center,
-            ),
-          ],
+          ),
         ),
       ),
     );

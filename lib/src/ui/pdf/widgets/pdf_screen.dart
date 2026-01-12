@@ -112,6 +112,58 @@ class _PdfScreenState extends State<PdfScreen> {
     }
   }
 
+  void _importPhotosFromDevice() async {
+    try {
+      await _viewModel.importImagesFromDevice();
+      await _saveDocument();
+
+      if (mounted) {
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: const Text('✅ Фото добавлены'),
+            description: Text(
+                'Добавлено ${_viewModel.document?.imagePaths.length ?? 0} фотографий'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Ошибка импорта фото'),
+            description: Text('$e'),
+          ),
+        );
+      }
+    }
+  }
+
+  void _importPdfPages() async {
+    try {
+      await _viewModel.importPdfPages();
+      await _saveDocument();
+
+      if (mounted) {
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: const Text('✅ PDF импортирован'),
+            description: Text(
+                'Добавлено ${_viewModel.document?.imagePaths.length ?? 0} страниц'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Ошибка импорта PDF'),
+            description: Text('$e'),
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _exportPdf() async {
     if (_viewModel.document == null) return;
 
@@ -298,6 +350,9 @@ class _PdfScreenState extends State<PdfScreen> {
     showShadSheet(
       context: context,
       side: ShadSheetSide.bottom,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) => _PageManagementSheet(
         viewModel: _viewModel,
         onReorder: (oldIndex, newIndex) {
@@ -321,10 +376,13 @@ class _PdfScreenState extends State<PdfScreen> {
   void _showMoreOptions() {
     final theme = ShadTheme.of(context);
     final isPremium = widget.subscriptionService.isPremiumUser;
-    
+
     showShadSheet(
       context: context,
       side: ShadSheetSide.bottom,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) => ShadSheet(
         title: const Text('Опции документа'),
         child: Padding(
@@ -333,6 +391,30 @@ class _PdfScreenState extends State<PdfScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              ShadButton.outline(
+                leading: const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Icon(LucideIcons.image, size: 20),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _importPhotosFromDevice();
+                },
+                child: const Text('Добавить фото'),
+              ),
+              const SizedBox(height: 12),
+              ShadButton.outline(
+                leading: const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Icon(LucideIcons.file, size: 20),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _importPdfPages();
+                },
+                child: const Text('Импортировать PDF'),
+              ),
+              const SizedBox(height: 12),
               ShadButton.outline(
                 leading: const Padding(
                   padding: EdgeInsets.only(right: 8),
@@ -348,29 +430,43 @@ class _PdfScreenState extends State<PdfScreen> {
               ShadButton.outline(
                 leading: Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: Icon(LucideIcons.printer, size: 20, 
-                    color: isPremium ? null : theme.colorScheme.muted),
+                  child: Icon(LucideIcons.printer,
+                      size: 20,
+                      color: isPremium ? null : theme.colorScheme.muted),
                 ),
-                trailing: isPremium ? null : const Icon(LucideIcons.sparkles, size: 16, color: Colors.amber),
+                trailing: isPremium
+                    ? null
+                    : const Icon(LucideIcons.sparkles,
+                        size: 16, color: Colors.amber),
                 onPressed: () {
                   Navigator.pop(context);
                   _printDocument();
                 },
-                child: Text('Печать', style: isPremium ? null : TextStyle(color: theme.colorScheme.muted)),
+                child: Text('Печать',
+                    style: isPremium
+                        ? null
+                        : TextStyle(color: theme.colorScheme.muted)),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
                 leading: Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: Icon(LucideIcons.share2, size: 20,
-                    color: isPremium ? null : theme.colorScheme.muted),
+                  child: Icon(LucideIcons.share2,
+                      size: 20,
+                      color: isPremium ? null : theme.colorScheme.muted),
                 ),
-                trailing: isPremium ? null : const Icon(LucideIcons.sparkles, size: 16, color: Colors.amber),
+                trailing: isPremium
+                    ? null
+                    : const Icon(LucideIcons.sparkles,
+                        size: 16, color: Colors.amber),
                 onPressed: () {
                   Navigator.pop(context);
                   _shareDocument();
                 },
-                child: Text('Поделиться', style: isPremium ? null : TextStyle(color: theme.colorScheme.muted)),
+                child: Text('Поделиться',
+                    style: isPremium
+                        ? null
+                        : TextStyle(color: theme.colorScheme.muted)),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -406,7 +502,7 @@ class _PdfScreenState extends State<PdfScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
@@ -430,7 +526,8 @@ class _PdfScreenState extends State<PdfScreen> {
                 ),
               ),
               const SizedBox(width: 4),
-              Icon(LucideIcons.penLine, size: 14, color: theme.colorScheme.mutedForeground),
+              Icon(LucideIcons.penLine,
+                  size: 14, color: theme.colorScheme.mutedForeground),
             ],
           ),
         ),
@@ -485,7 +582,9 @@ class _PdfScreenState extends State<PdfScreen> {
                         : Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: Icon(
-                              _viewModel.hasImages ? LucideIcons.refreshCw : LucideIcons.scan,
+                              _viewModel.hasImages
+                                  ? LucideIcons.refreshCw
+                                  : LucideIcons.scan,
                               size: 18,
                             ),
                           ),
@@ -522,7 +621,8 @@ class _PdfScreenState extends State<PdfScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(LucideIcons.scanLine, size: 48, color: theme.colorScheme.mutedForeground),
+                        Icon(LucideIcons.scanLine,
+                            size: 48, color: theme.colorScheme.mutedForeground),
                         const SizedBox(height: 16),
                         Text(
                           'Нет отсканированных изображений',
@@ -566,7 +666,8 @@ class _PdfScreenState extends State<PdfScreen> {
                                           padding: const EdgeInsets.all(4),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFF22C55E),
-                                            borderRadius: BorderRadius.circular(4),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
                                           ),
                                           child: const Icon(
                                             LucideIcons.check,
@@ -580,8 +681,10 @@ class _PdfScreenState extends State<PdfScreen> {
                                         child: Container(
                                           padding: const EdgeInsets.all(4),
                                           decoration: BoxDecoration(
-                                            color: theme.colorScheme.destructive.withValues(alpha: 0.9),
-                                            borderRadius: BorderRadius.circular(4),
+                                            color: theme.colorScheme.destructive
+                                                .withValues(alpha: 0.9),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
                                           ),
                                           child: const Icon(
                                             LucideIcons.trash2,
@@ -605,18 +708,23 @@ class _PdfScreenState extends State<PdfScreen> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: theme.colorScheme.foreground.withValues(alpha: 0.7),
+                                        color: theme.colorScheme.foreground
+                                            .withValues(alpha: 0.7),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(LucideIcons.penTool, size: 12, color: theme.colorScheme.background),
+                                          Icon(LucideIcons.penTool,
+                                              size: 12,
+                                              color:
+                                                  theme.colorScheme.background),
                                           const SizedBox(width: 4),
                                           Text(
                                             'Нажмите для редактирования',
                                             style: TextStyle(
-                                              color: theme.colorScheme.background,
+                                              color:
+                                                  theme.colorScheme.background,
                                               fontSize: 12,
                                             ),
                                           ),
@@ -673,8 +781,8 @@ class _PdfScreenState extends State<PdfScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: isSelected 
-                              ? theme.colorScheme.primary 
+                          color: isSelected
+                              ? theme.colorScheme.primary
                               : theme.colorScheme.border,
                           width: isSelected ? 2 : 1,
                         ),
@@ -682,7 +790,8 @@ class _PdfScreenState extends State<PdfScreen> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.3),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -708,7 +817,8 @@ class _PdfScreenState extends State<PdfScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.foreground.withValues(alpha: 0.8),
+                                  color: theme.colorScheme.foreground
+                                      .withValues(alpha: 0.8),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -775,7 +885,7 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
-    
+
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       minChildSize: 0.4,
@@ -804,13 +914,15 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                     const SizedBox(height: 16),
                     Text(
                       'Управление страницами',
-                      style: theme.textTheme.large.copyWith(fontWeight: FontWeight.w600),
+                      style: theme.textTheme.large
+                          .copyWith(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(LucideIcons.gripVertical, size: 14, color: theme.colorScheme.mutedForeground),
+                        Icon(LucideIcons.gripVertical,
+                            size: 14, color: theme.colorScheme.mutedForeground),
                         const SizedBox(width: 4),
                         Text(
                           'Перетащите для изменения порядка',
@@ -840,7 +952,8 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                   itemBuilder: (context, index) {
                     return Container(
                       key: ValueKey('manage_page_$index'),
-                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.background,
                         border: Border.all(color: theme.colorScheme.border),
@@ -871,11 +984,13 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                         subtitle: widget.viewModel.isImageEdited(index)
                             ? Row(
                                 children: [
-                                  const Icon(LucideIcons.check, size: 12, color: Color(0xFF22C55E)),
+                                  const Icon(LucideIcons.check,
+                                      size: 12, color: Color(0xFF22C55E)),
                                   const SizedBox(width: 4),
                                   Text(
                                     'Отредактировано',
-                                    style: theme.textTheme.small.copyWith(color: const Color(0xFF22C55E)),
+                                    style: theme.textTheme.small.copyWith(
+                                        color: const Color(0xFF22C55E)),
                                   ),
                                 ],
                               )
@@ -885,9 +1000,9 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                           children: [
                             ShadIconButton.ghost(
                               icon: Icon(
-                                LucideIcons.trash2, 
-                                color: widget.viewModel.totalPages > 1 
-                                    ? theme.colorScheme.destructive 
+                                LucideIcons.trash2,
+                                color: widget.viewModel.totalPages > 1
+                                    ? theme.colorScheme.destructive
                                     : theme.colorScheme.mutedForeground,
                               ),
                               onPressed: widget.viewModel.totalPages > 1
@@ -897,7 +1012,8 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                                     }
                                   : null,
                             ),
-                            Icon(LucideIcons.gripVertical, color: theme.colorScheme.mutedForeground),
+                            Icon(LucideIcons.gripVertical,
+                                color: theme.colorScheme.mutedForeground),
                           ],
                         ),
                         onTap: () => widget.onPageTap(index),
