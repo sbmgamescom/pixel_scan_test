@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_scan_test/src/core/config/images.dart';
 
+import '../../../core/router/app_navigator.dart';
+import '../../../core/services/subscription_service.dart';
+
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final SubscriptionService subscriptionService;
+  final AppNavigator appNavigator;
+
+  const MainScreen({
+    super.key,
+    required this.subscriptionService,
+    required this.appNavigator,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();

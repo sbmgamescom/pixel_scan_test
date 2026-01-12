@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_scan_test/src/ui/home/widgets/home_screen.dart';
-import 'package:provider/provider.dart';
 
-import 'src/core/models/subscription_models.dart';
 import 'src/core/services/subscription_service.dart';
+import 'src/core/router/app_navigator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,22 +20,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<SubscriptionService>.value(value: subscriptionService),
-        StreamProvider<UserSubscriptionInfo>(
-          create: (_) => subscriptionService.subscriptionStream,
-          initialData: subscriptionService.currentSubscriptionInfo,
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Pixel Scan Test',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-          useMaterial3: true,
-          fontFamily: 'SF Pro Display', // Статический SF Pro шрифт
-        ),
-        home: const MainScreen(),
+    final appNavigator = AppNavigator();
+    
+    return MaterialApp(
+      title: 'Pixel Scan Test',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+        fontFamily: 'SF Pro Display', // Статический SF Pro шрифт
+      ),
+      home: MainScreen(
+        subscriptionService: subscriptionService,
+        appNavigator: appNavigator,
       ),
     );
   }

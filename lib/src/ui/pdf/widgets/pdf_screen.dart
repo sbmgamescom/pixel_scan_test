@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../core/services/subscription_service.dart';
 import '../../paywall/paywall_screen.dart';
 import '../viewmodel/pdf_viewmodel.dart';
 
 class PdfScreen extends StatefulWidget {
-  const PdfScreen({super.key});
+  final SubscriptionService subscriptionService;
+
+  const PdfScreen({
+    super.key,
+    required this.subscriptionService,
+  });
 
   @override
   State<PdfScreen> createState() => _PdfScreenState();
@@ -60,18 +64,16 @@ class _PdfScreenState extends State<PdfScreen> {
     }
   }
 
-  void _printDocument(BuildContext context) {
-    final subscriptionService = context.read<SubscriptionService>();
-    if (subscriptionService.isPremiumUser) {
+  void _printDocument() {
+    if (widget.subscriptionService.isPremiumUser) {
       _showPrintDialog();
     } else {
       _showPaywallForFeature('print');
     }
   }
 
-  void _shareDocument(BuildContext context) {
-    final subscriptionService = context.read<SubscriptionService>();
-    if (subscriptionService.isPremiumUser) {
+  void _shareDocument() {
+    if (widget.subscriptionService.isPremiumUser) {
       _showShareDialog();
     } else {
       _showPaywallForFeature('share');
@@ -82,7 +84,10 @@ class _PdfScreenState extends State<PdfScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PaywallScreen(source: feature),
+        builder: (context) => PaywallScreen(
+          source: feature,
+          subscriptionService: widget.subscriptionService,
+        ),
       ),
     );
   }
@@ -132,13 +137,13 @@ class _PdfScreenState extends State<PdfScreen> {
             // Кнопка печати
             IconButton(
               icon: const Icon(Icons.print),
-              onPressed: () => _printDocument(context),
+              onPressed: _printDocument,
               tooltip: 'Печать',
             ),
             // Кнопка поделиться
             IconButton(
               icon: const Icon(Icons.share),
-              onPressed: () => _shareDocument(context),
+              onPressed: _shareDocument,
               tooltip: 'Поделиться',
             ),
             IconButton(

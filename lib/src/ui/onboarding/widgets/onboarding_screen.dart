@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:pixel_scan_test/src/components/loading_overlay.dart';
 import 'package:pixel_scan_test/src/core/config/icons.dart';
 import 'package:pixel_scan_test/src/core/config/images.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../core/services/subscription_service.dart';
@@ -14,11 +13,13 @@ import 'paywall_page_widget.dart';
 class OnboardingScreen extends StatefulWidget {
   final VoidCallback? onCompleted;
   final bool showPaywallOnly; // Если true, показываем только paywall
+  final SubscriptionService subscriptionService;
 
   const OnboardingScreen({
     super.key,
     this.onCompleted,
     this.showPaywallOnly = false,
+    required this.subscriptionService,
   });
 
   @override
@@ -45,9 +46,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _loadProducts() async {
-    final subscriptionService = context.read<SubscriptionService>();
     try {
-      final products = await subscriptionService.getAvailableProducts();
+      final products = await widget.subscriptionService.getAvailableProducts();
       setState(() {
         _selectedProductId = products
             .firstWhere((p) => p.isRecommended, orElse: () => products.first)
@@ -71,124 +71,122 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return LoadingOverlay(
       isLoading: _isLoading,
-      child: ChangeNotifierProvider.value(
-        value: _viewModel,
-        child: Consumer<OnboardingViewModel>(
-          builder: (context, viewModel, child) {
-            return Scaffold(
-              body: SafeArea(
-                child: Column(
-                  children: [
-                    SizedBox(height: 40),
-                    // Контент страниц (прокручиваемая область)
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          // Фоновое SVG изображение
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: SvgPicture.asset(
-                              AppImages.onboardingBg,
-                              width: 184.57,
-                              height: 281.49,
-                              fit: BoxFit.contain,
-                            ),
+      child: ListenableBuilder(
+        listenable: _viewModel,
+        builder: (context, child) {
+          return Scaffold(
+            body: SafeArea(
+              child: Column(
+                children: [
+                  SizedBox(height: 40),
+                  // Контент страниц (прокручиваемая область)
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        // Фоновое SVG изображение
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: SvgPicture.asset(
+                            AppImages.onboardingBg,
+                            width: 184.57,
+                            height: 281.49,
+                            fit: BoxFit.contain,
                           ),
+                        ),
 
-                          PageView.builder(
-                            controller: viewModel.pageController,
-                            scrollDirection: Axis.vertical,
-                            physics: NeverScrollableScrollPhysics(),
-                            onPageChanged: (index) =>
-                                viewModel.setCurrentPage(index),
-                            itemCount: viewModel.totalPages,
-                            itemBuilder: (context, index) {
-                              if (index == viewModel.onboardingPages.length) {
-                                return PaywallPageWidget(
-                                  onPurchaseSuccess: () {
-                                    Navigator.pop(context, true);
-                                    if (widget.onCompleted != null) {
-                                      widget.onCompleted!();
-                                    }
-                                  },
-                                );
-                              }
-
-                              final pageData = viewModel.onboardingPages[index];
-                              return OnboardingPageWidget(
-                                pageData: pageData,
-                                pageIndex: index,
+                        PageView.builder(
+                          controller: _viewModel.pageController,
+                          scrollDirection: Axis.vertical,
+                          physics: NeverScrollableScrollPhysics(),
+                          onPageChanged: (index) =>
+                              _viewModel.setCurrentPage(index),
+                          itemCount: _viewModel.totalPages,
+                          itemBuilder: (context, index) {
+                            if (index == _viewModel.onboardingPages.length) {
+                              return PaywallPageWidget(
+                                onPurchaseSuccess: () {
+                                  Navigator.pop(context, true);
+                                  if (widget.onCompleted != null) {
+                                    widget.onCompleted!();
+                                  }
+                                },
+                                subscriptionService: widget.subscriptionService,
                               );
-                            },
-                          ),
+                            }
 
-                          // Фиксированные индикаторы страниц
-                          Positioned(
-                            left: 28,
-                            top: 5,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                viewModel.totalPages,
-                                (index) => Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 4),
-                                  height:
-                                      viewModel.currentPage == index ? 32 : 12,
-                                  width: 5,
-                                  decoration: BoxDecoration(
-                                    color: viewModel.currentPage == index
-                                        ? Color(0xFFFD1524)
-                                        : Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
+                            final pageData = _viewModel.onboardingPages[index];
+                            return OnboardingPageWidget(
+                              pageData: pageData,
+                              pageIndex: index,
+                            );
+                          },
+                        ),
+
+                        // Фиксированные индикаторы страниц
+                        Positioned(
+                          left: 28,
+                          top: 5,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              _viewModel.totalPages,
+                              (index) => Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                height:
+                                    _viewModel.currentPage == index ? 32 : 12,
+                                width: 5,
+                                decoration: BoxDecoration(
+                                  color: _viewModel.currentPage == index
+                                      ? Color(0xFFFD1524)
+                                      : Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
                             ),
                           ),
-                          if (viewModel.isPaywallPage) ...[
-                            Positioned(
-                              left: 20,
-                              right: 20,
-                              bottom: 0,
-                              child: Column(
-                                children: [
-                                  pricingItem(
-                                    isSelected: viewModel.selectedPrice == 0,
-                                    title: 'Week',
-                                    subtitle: '3-Day Free Trial',
-                                    price: "1.99\$",
-                                    onTap: () {
-                                      viewModel.selectPrice(0);
-                                    },
-                                  ),
-                                  SizedBox(height: 16),
-                                  pricingItem(
-                                    isSelected: viewModel.selectedPrice == 1,
-                                    title: 'Year',
-                                    subtitle: null,
-                                    price: "10.99\$",
-                                    onTap: () {
-                                      viewModel.selectPrice(1);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                        ),
+                        if (_viewModel.isPaywallPage) ...[
+                          Positioned(
+                            left: 20,
+                            right: 20,
+                            bottom: 0,
+                            child: Column(
+                              children: [
+                                pricingItem(
+                                  isSelected: _viewModel.selectedPrice == 0,
+                                  title: 'Week',
+                                  subtitle: '3-Day Free Trial',
+                                  price: "1.99\$",
+                                  onTap: () {
+                                    _viewModel.selectPrice(0);
+                                  },
+                                ),
+                                SizedBox(height: 16),
+                                pricingItem(
+                                  isSelected: _viewModel.selectedPrice == 1,
+                                  title: 'Year',
+                                  subtitle: null,
+                                  price: "10.99\$",
+                                  onTap: () {
+                                    _viewModel.selectPrice(1);
+                                  },
+                                ),
+                              ],
+                            ),
+                          )
                         ],
-                      ),
+                      ],
                     ),
-
-                    // Фиксированная нижняя панель
-                    _buildBottomPanel(viewModel),
-                  ],
-                ),
+                  ),
+                  // Фиксированная нижняя панель
+                  _buildBottomPanel(_viewModel),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -411,9 +409,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
 
     try {
-      final subscriptionService = context.read<SubscriptionService>();
       final success =
-          await subscriptionService.purchaseProduct(_selectedProductId!);
+          await widget.subscriptionService.purchaseProduct(_selectedProductId!);
 
       if (success && mounted) {
         // Закрываем onboarding и возвращаемся в main
@@ -459,8 +456,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
 
     try {
-      final subscriptionService = context.read<SubscriptionService>();
-      final success = await subscriptionService.restorePurchases();
+      final success = await widget.subscriptionService.restorePurchases();
 
       if (success && mounted) {
         Navigator.pop(context, true);

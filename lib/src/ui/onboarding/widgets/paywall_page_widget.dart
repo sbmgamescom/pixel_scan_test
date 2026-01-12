@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_scan_test/src/core/config/images.dart';
 
+import '../../../core/services/subscription_service.dart';
 import '../../../core/utils/app_text_styles.dart';
 
 class PaywallPageWidget extends StatefulWidget {
   final VoidCallback? onPurchaseSuccess;
+  final SubscriptionService subscriptionService;
 
   const PaywallPageWidget({
     super.key,
     this.onPurchaseSuccess,
+    required this.subscriptionService,
   });
 
   @override

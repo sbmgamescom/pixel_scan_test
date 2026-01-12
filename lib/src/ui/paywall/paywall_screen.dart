@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../core/models/subscription_models.dart';
 import '../../core/services/subscription_service.dart';
 
 class PaywallScreen extends StatefulWidget {
   final String source; // onboarding, launch, print, share
+  final SubscriptionService subscriptionService;
 
   const PaywallScreen({
     super.key,
     required this.source,
+    required this.subscriptionService,
   });
 
   @override
@@ -29,9 +30,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Future<void> _loadProducts() async {
-    final subscriptionService = context.read<SubscriptionService>();
     try {
-      final products = await subscriptionService.getAvailableProducts();
+      final products = await widget.subscriptionService.getAvailableProducts();
       setState(() {
         _products = products;
         _selectedProductId =
@@ -53,9 +53,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
     });
 
     try {
-      final subscriptionService = context.read<SubscriptionService>();
       final success =
-          await subscriptionService.purchaseProduct(_selectedProductId!);
+          await widget.subscriptionService.purchaseProduct(_selectedProductId!);
 
       if (success && mounted) {
         Navigator.pop(context, true);
@@ -97,8 +96,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     });
 
     try {
-      final subscriptionService = context.read<SubscriptionService>();
-      final success = await subscriptionService.restorePurchases();
+      final success = await widget.subscriptionService.restorePurchases();
 
       if (success && mounted) {
         Navigator.pop(context, true);

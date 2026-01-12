@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../components/loading_overlay.dart';
-import '../viewmodel/subscription_viewmodel.dart';
+import '../../../core/services/subscription_service.dart';
 
 class PaywallScreen extends StatefulWidget {
   final VoidCallback? onPurchaseSuccess;
@@ -10,6 +9,7 @@ class PaywallScreen extends StatefulWidget {
   final bool showSkipButton;
   final String title;
   final String subtitle;
+  final SubscriptionService subscriptionService;
 
   const PaywallScreen({
     super.key,
@@ -19,6 +19,7 @@ class PaywallScreen extends StatefulWidget {
     this.title = 'Перейти на Премиум',
     this.subtitle = 'Разблокируйте все возможности приложения',
     required String source,
+    required this.subscriptionService,
   });
 
   @override
@@ -27,39 +28,49 @@ class PaywallScreen extends StatefulWidget {
 
 class _PaywallScreenState extends State<PaywallScreen> {
   String? _selectedProductId;
+  bool _isPurchasing = false;
+  List<dynamic> _availableProducts = [];
+  bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final viewModel = context.read<SubscriptionViewModel>();
-      if (viewModel.availableProducts.isEmpty) {
-        viewModel.loadAvailableProducts();
+    _loadAvailableProducts();
+  }
+
+  Future<void> _loadAvailableProducts() async {
+    try {
+      final products = await widget.subscriptionService.getAvailableProducts();
+      setState(() {
+        _availableProducts = products;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка загрузки подписок: $e')),
+        );
       }
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A2E),
-      body: Consumer<SubscriptionViewModel>(
-        builder: (context, viewModel, child) {
-          return LoadingOverlay(
-            isLoading: viewModel.isPurchasing,
-            child: SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  Expanded(
-                    child: _buildContent(viewModel),
-                  ),
-                  _buildBottomSection(viewModel),
-                ],
+      body: LoadingOverlay(
+        isLoading: _isPurchasing,
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(
+                child: _buildContent(),
               ),
-            ),
-          );
-        },
+              _buildBottomSection(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -94,7 +105,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
-  Widget _buildContent(SubscriptionViewModel viewModel) {
+  Widget _buildContent() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -103,10 +114,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
           const SizedBox(height: 40),
           _buildFeatures(),
           const SizedBox(height: 40),
-          _buildSubscriptionOptions(viewModel),
+          _buildSubscriptionOptions(),
           const SizedBox(height: 20),
-          if (viewModel.errorMessage != null)
-            _buildErrorMessage(viewModel.errorMessage!),
+          if (_errorMessage != null) _buildErrorMessage(_errorMessage!),
         ],
       ),
     );
@@ -200,8 +210,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
-  Widget _buildSubscriptionOptions(SubscriptionViewModel viewModel) {
-    if (viewModel.isLoading) {
+  Widget _buildSubscriptionOptions() {
+    if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(
           color: Color(0xFF6C63FF),
@@ -209,7 +219,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       );
     }
 
-    if (viewModel.availableProducts.isEmpty) {
+    if (_availableProducts.isEmpty) {
       return const Text(
         'Подписки временно недоступны',
         style: TextStyle(
@@ -221,9 +231,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
     }
 
     return Column(
-      children: viewModel.availableProducts.map((product) {
+      children: _availableProducts.map((product) {
         final isSelected = _selectedProductId == product.productId;
-        final isPopular = product.productId.contains('monthly');
 
         return GestureDetector(
           onTap: () {
@@ -245,95 +254,65 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   ? const Color(0xFF6C63FF).withOpacity(0.1)
                   : Colors.white.withOpacity(0.05),
             ),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Radio<String>(
-                        value: product.productId,
-                        groupValue: _selectedProductId,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedProductId = value;
-                          });
-                        },
-                        activeColor: const Color(0xFF6C63FF),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _getProductTitle(product.period),
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _getProductDescription(product.period),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                              ),
-                            ),
-                            if (product.trialPeriod != null)
-                              const SizedBox(height: 4),
-                            if (product.trialPeriod != null)
-                              Text(
-                                'Бесплатный пробный период',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.green[400],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        product.price,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Radio<String>(
+                    value: product.productId,
+                    groupValue: _selectedProductId,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedProductId = value;
+                      });
+                    },
+                    activeColor: const Color(0xFF6C63FF),
                   ),
-                ),
-                if (isPopular)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF6C63FF),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(16),
-                          bottomLeft: Radius.circular(16),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _getProductTitle(product.period),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      child: const Text(
-                        'Популярное',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                        const SizedBox(height: 4),
+                        Text(
+                          _getProductDescription(product.period),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
                         ),
-                      ),
+                        if (product.trialPeriod != null)
+                          const SizedBox(height: 4),
+                        if (product.trialPeriod != null)
+                          Text(
+                            'Бесплатный пробный период',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.green[400],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-              ],
+                  Text(
+                    product.price,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -399,7 +378,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
-  Widget _buildBottomSection(SubscriptionViewModel viewModel) {
+  Widget _buildBottomSection() {
     return Container(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -408,8 +387,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: _selectedProductId != null && !viewModel.isPurchasing
-                  ? () => _handlePurchase(viewModel)
+              onPressed: _selectedProductId != null && !_isPurchasing
+                  ? _handlePurchase
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF6C63FF),
@@ -419,7 +398,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ),
                 elevation: 0,
               ),
-              child: viewModel.isPurchasing
+              child: _isPurchasing
                   ? const SizedBox(
                       height: 20,
                       width: 20,
@@ -442,7 +421,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                onPressed: () => _handleRestore(viewModel),
+                onPressed: _handleRestore,
                 child: const Text(
                   'Восстановить',
                   style: TextStyle(
@@ -476,23 +455,68 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
-  Future<void> _handlePurchase(SubscriptionViewModel viewModel) async {
+  Future<void> _handlePurchase() async {
     if (_selectedProductId == null) return;
 
-    final success = await viewModel.purchaseSubscription(_selectedProductId!);
+    setState(() {
+      _isPurchasing = true;
+    });
 
-    if (success && mounted) {
-      widget.onPurchaseSuccess?.call();
-      Navigator.of(context).pop();
+    try {
+      final success = await widget.subscriptionService
+          .purchaseProduct(_selectedProductId!);
+
+      if (success && mounted) {
+        widget.onPurchaseSuccess?.call();
+        Navigator.of(context).pop();
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Покупка не удалась')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPurchasing = false;
+        });
+      }
     }
   }
 
-  Future<void> _handleRestore(SubscriptionViewModel viewModel) async {
-    final restored = await viewModel.restorePurchases();
+  Future<void> _handleRestore() async {
+    setState(() {
+      _isPurchasing = true;
+    });
 
-    if (restored && mounted) {
-      widget.onPurchaseSuccess?.call();
-      Navigator.of(context).pop();
+    try {
+      final restored = await widget.subscriptionService.restorePurchases();
+
+      if (restored && mounted) {
+        widget.onPurchaseSuccess?.call();
+        Navigator.of(context).pop();
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Активные подписки не найдены')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPurchasing = false;
+        });
+      }
     }
   }
 }
