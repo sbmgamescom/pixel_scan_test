@@ -21,7 +21,7 @@ class DocumentStorageService {
   }
 
   /// Сохранить документ
-  static Future<void> saveDocument(DocumentModel document) async {
+  static Future<DocumentModel> saveDocument(DocumentModel document) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final docsDir = await _getDocumentsDirectory();
@@ -34,13 +34,25 @@ class DocumentStorageService {
 
       // Копируем изображения в постоянное хранилище
       final List<String> savedImagePaths = [];
+      dev.log(
+          'Сохранение документа ${document.id}: ${document.imagePaths.length} изображений');
       for (int i = 0; i < document.imagePaths.length; i++) {
         final originalPath = document.imagePaths[i];
         final originalFile = File(originalPath);
 
-        if (await originalFile.exists()) {
+        final exists = await originalFile.exists();
+        dev.log('Изображение $i: $originalPath, существует: $exists');
+        if (exists) {
           final newPath = '${docDir.path}/page_$i.jpg';
-          await originalFile.copy(newPath);
+
+          // Проверяем, не пытаемся ли мы скопировать файл сам в себя
+          if (originalPath != newPath) {
+            await originalFile.copy(newPath);
+            dev.log('Скопировано в: $newPath');
+          } else {
+            dev.log('Файл уже находится в нужном месте: $newPath');
+          }
+
           savedImagePaths.add(newPath);
 
           // Сохраняем отредактированные изображения
@@ -73,6 +85,7 @@ class DocumentStorageService {
       await prefs.setString(_documentsKey, jsonEncode(documentsJson));
 
       dev.log('Документ сохранён: ${document.id}');
+      return savedDocument;
     } catch (e) {
       dev.log('Ошибка сохранения документа: $e');
       rethrow;
@@ -173,8 +186,8 @@ class DocumentStorageService {
   }
 
   /// Обновить документ (после редактирования страниц)
-  static Future<void> updateDocument(DocumentModel document) async {
-    await saveDocument(document);
+  static Future<DocumentModel> updateDocument(DocumentModel document) async {
+    return await saveDocument(document);
   }
 
   /// Получить путь к PDF файлу документа (если существует)

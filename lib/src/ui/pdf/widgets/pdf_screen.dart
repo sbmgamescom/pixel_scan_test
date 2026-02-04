@@ -98,7 +98,10 @@ class _PdfScreenState extends State<PdfScreen> {
   Future<void> _saveDocument() async {
     if (_viewModel.document != null) {
       try {
-        await DocumentStorageService.saveDocument(_viewModel.document!);
+        final savedDocument =
+            await DocumentStorageService.saveDocument(_viewModel.document!);
+        // Обновляем документ в viewModel с новыми путями к файлам
+        _viewModel.loadDocument(savedDocument);
       } catch (e) {
         if (mounted) {
           ShadToaster.of(context).show(
@@ -591,7 +594,7 @@ class _PdfScreenState extends State<PdfScreen> {
                     child: Text(_viewModel.isLoading
                         ? 'Сканирование...'
                         : _viewModel.hasImages
-                            ? 'Пересканировать'
+                            ? 'Заново'
                             : 'Сканировать документ'),
                   ),
                 ),

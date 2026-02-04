@@ -77,12 +77,13 @@ class HomeViewModel extends ChangeNotifier {
         );
 
         // Сохраняем документ
-        await DocumentStorageService.saveDocument(document);
+        final savedDocument =
+            await DocumentStorageService.saveDocument(document);
 
         // Перезагружаем список
         await loadDocuments();
 
-        return document;
+        return savedDocument;
       }
 
       return null;
@@ -138,10 +139,11 @@ class HomeViewModel extends ChangeNotifier {
 
       if (document != null) {
         // Сохраняем документ
-        await DocumentStorageService.saveDocument(document);
+        final savedDocument =
+            await DocumentStorageService.saveDocument(document);
         // Перезагружаем список
         await loadDocuments();
-        return document;
+        return savedDocument;
       }
 
       return null;
@@ -163,9 +165,10 @@ class HomeViewModel extends ChangeNotifier {
       final document = await PdfImportService.importImagesFromDevice();
 
       if (document != null) {
-        await DocumentStorageService.saveDocument(document);
+        final savedDocument =
+            await DocumentStorageService.saveDocument(document);
         await loadDocuments();
-        return document;
+        return savedDocument;
       }
 
       return null;
