@@ -15,6 +15,7 @@ class HomeViewModel extends ChangeNotifier {
   bool _isScanning = false;
   bool _isImporting = false;
   String? _errorMessage;
+  String _searchQuery = '';
 
   List<DocumentModel> get documents => _documents;
   bool get isLoading => _isLoading;
@@ -22,6 +23,15 @@ class HomeViewModel extends ChangeNotifier {
   bool get isImporting => _isImporting;
   bool get hasDocuments => _documents.isNotEmpty;
   String? get errorMessage => _errorMessage;
+  
+  List<DocumentModel> get filteredDocuments {
+    if (_searchQuery.isEmpty) {
+      return _documents;
+    }
+    return _documents.where((doc) {
+      return doc.name.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
+  }
 
   HomeViewModel() {
     loadDocuments();
@@ -44,6 +54,11 @@ class HomeViewModel extends ChangeNotifier {
 
   void _setError(String? message) {
     _errorMessage = message;
+    notifyListeners();
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
     notifyListeners();
   }
 

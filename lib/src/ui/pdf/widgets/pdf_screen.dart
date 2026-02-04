@@ -8,6 +8,7 @@ import '../../../core/services/document_storage_service.dart';
 import '../../../core/services/pdf_export_service.dart';
 import '../../../core/services/share_service.dart';
 import '../../../core/services/subscription_service.dart';
+import '../../components/app_header.dart';
 import '../../paywall/paywall_screen.dart';
 import '../viewmodel/pdf_viewmodel.dart';
 
@@ -507,235 +508,352 @@ class _PdfScreenState extends State<PdfScreen> {
     final theme = ShadTheme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
-      appBar: AppBar(
         backgroundColor: theme.colorScheme.background,
-        leading: ShadIconButton.ghost(
-          icon: const Icon(LucideIcons.arrowLeft),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: GestureDetector(
-          onTap: _showRenameDialog,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+        body: SafeArea(
+          child: Column(
             children: [
-              Flexible(
-                child: Text(
-                  _viewModel.hasImages
-                      ? '${_viewModel.document?.name ?? 'Document'} (${_viewModel.currentPageIndex + 1}/${_viewModel.totalPages})'
-                      : 'Новый документ',
-                  style: theme.textTheme.large,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Icon(LucideIcons.penLine,
-                  size: 14, color: theme.colorScheme.mutedForeground),
-            ],
-          ),
-        ),
-        actions: [
-          if (_viewModel.hasImages) ...[
-            if (_isExporting || _isSharing)
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              )
-            else ...[
-              ShadIconButton.ghost(
-                icon: const Icon(LucideIcons.fileText),
-                onPressed: _exportPdf,
-              ),
-              ShadIconButton.ghost(
-                icon: const Icon(LucideIcons.share2),
-                onPressed: _shareDocument,
-              ),
-            ],
-            ShadIconButton.ghost(
-              icon: const Icon(LucideIcons.ellipsisVertical),
-              onPressed: _showMoreOptions,
-            ),
-          ],
-        ],
-      ),
-      body: Column(
-        children: [
-          // Кнопки сканирования и добавления
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ShadButton(
-                    enabled: !_viewModel.isLoading,
-                    onPressed: _scanDocument,
-                    leading: _viewModel.isLoading
-                        ? const SizedBox(
-                            height: 16,
-                            width: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
+              AppHeader(
+                onBack: () => Navigator.pop(context),
+                titleWidget: _viewModel.hasImages
+                    ? GestureDetector(
+                        onTap: _showRenameDialog,
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                '${_viewModel.document?.name ?? 'Document'} (${_viewModel.currentPageIndex + 1}/${_viewModel.totalPages})',
+                                style: theme.textTheme.h3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Icon(
-                              _viewModel.hasImages
-                                  ? LucideIcons.refreshCw
-                                  : LucideIcons.scan,
-                              size: 18,
-                            ),
-                          ),
-                    child: Text(_viewModel.isLoading
-                        ? 'Сканирование...'
-                        : _viewModel.hasImages
-                            ? 'Заново'
-                            : 'Сканировать документ'),
-                  ),
-                ),
-                if (_viewModel.hasImages) ...[
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ShadButton.outline(
-                      enabled: !_viewModel.isLoading,
-                      onPressed: _addPages,
-                      leading: const Padding(
-                        padding: EdgeInsets.only(right: 8),
-                        child: Icon(LucideIcons.plus, size: 18),
+                            const SizedBox(width: 8),
+                            Icon(LucideIcons.penLine,
+                                size: 16,
+                                color: theme.colorScheme.mutedForeground),
+                          ],
+                        ),
+                      )
+                    : Text('Новый документ', style: theme.textTheme.h3),
+                actions: [
+                  if (_viewModel.hasImages) ...[
+                    if (_isExporting || _isSharing)
+                      const Padding(
+                        padding: EdgeInsets.only(right: 16),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    else ...[
+                      ShadIconButton.ghost(
+                        icon: const Icon(LucideIcons.fileText),
+                        onPressed: _exportPdf,
                       ),
-                      child: const Text('Добавить'),
+                      ShadIconButton.ghost(
+                        icon: const Icon(LucideIcons.share2),
+                        onPressed: _shareDocument,
+                      ),
+                    ],
+                    ShadIconButton.ghost(
+                      icon: const Icon(LucideIcons.ellipsisVertical),
+                      onPressed: _showMoreOptions,
                     ),
-                  ),
+                  ],
                 ],
-              ],
-            ),
-          ),
-
-          // Основная область просмотра
-          Expanded(
-            flex: 3,
-            child: !_viewModel.hasImages
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(LucideIcons.scanLine,
-                            size: 48, color: theme.colorScheme.mutedForeground),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Нет отсканированных изображений',
-                          style: theme.textTheme.muted,
-                        ),
-                      ],
-                    ),
-                  )
-                : PageView.builder(
-                    controller: _pageController,
-                    itemCount: _viewModel.scannedImages.length,
-                    onPageChanged: (index) {
-                      _viewModel.setCurrentPage(index);
-                    },
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () => _viewModel.editImage(
-                          context,
-                          _viewModel.scannedImages[index],
-                          index,
-                        ),
-                        child: Container(
-                          margin: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: theme.colorScheme.border),
-                            borderRadius: theme.radius,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: theme.radius,
-                            child: Stack(
-                              children: [
-                                _viewModel.buildImageWidget(index),
-                                // Кнопки на изображении
-                                Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: Row(
-                                    children: [
-                                      if (_viewModel.isImageEdited(index))
-                                        Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF22C55E),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: const Icon(
-                                            LucideIcons.check,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      const SizedBox(width: 8),
-                                      GestureDetector(
-                                        onTap: () => _deletePage(index),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: theme.colorScheme.destructive
-                                                .withValues(alpha: 0.9),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: const Icon(
-                                            LucideIcons.trash2,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+              ),
+              // Кнопки сканирования и добавления
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ShadButton(
+                        enabled: !_viewModel.isLoading,
+                        onPressed: _scanDocument,
+                        leading: _viewModel.isLoading
+                            ? const SizedBox(
+                                height: 16,
+                                width: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
                                 ),
-                                // Подсказка "нажмите для редактирования"
-                                Positioned(
-                                  bottom: 8,
-                                  left: 0,
-                                  right: 0,
-                                  child: Center(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: theme.colorScheme.foreground
-                                            .withValues(alpha: 0.7),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: Icon(
+                                  _viewModel.hasImages
+                                      ? LucideIcons.refreshCw
+                                      : LucideIcons.scan,
+                                  size: 18,
+                                ),
+                              ),
+                        child: Text(_viewModel.isLoading
+                            ? 'Сканирование...'
+                            : _viewModel.hasImages
+                                ? 'Заново'
+                                : 'Сканировать документ'),
+                      ),
+                    ),
+                    if (_viewModel.hasImages) ...[
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ShadButton.outline(
+                          enabled: !_viewModel.isLoading,
+                          onPressed: _addPages,
+                          leading: const Padding(
+                            padding: EdgeInsets.only(right: 8),
+                            child: Icon(LucideIcons.plus, size: 18),
+                          ),
+                          child: const Text('Добавить'),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              // Основная область просмотра
+              Expanded(
+                flex: 3,
+                child: !_viewModel.hasImages
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(LucideIcons.scanLine,
+                                size: 48,
+                                color: theme.colorScheme.mutedForeground),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Нет отсканированных изображений',
+                              style: theme.textTheme.muted,
+                            ),
+                          ],
+                        ),
+                      )
+                    : PageView.builder(
+                        controller: _pageController,
+                        itemCount: _viewModel.scannedImages.length,
+                        onPageChanged: (index) {
+                          _viewModel.setCurrentPage(index);
+                        },
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () => _viewModel.editImage(
+                              context,
+                              _viewModel.scannedImages[index],
+                              index,
+                            ),
+                            child: Container(
+                              margin: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: theme.colorScheme.border),
+                                borderRadius: theme.radius,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: theme.radius,
+                                child: Stack(
+                                  children: [
+                                    _viewModel.buildImageWidget(index),
+                                    // Кнопки на изображении
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
                                       child: Row(
-                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(LucideIcons.penTool,
-                                              size: 12,
-                                              color:
-                                                  theme.colorScheme.background),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            'Нажмите для редактирования',
-                                            style: TextStyle(
-                                              color:
-                                                  theme.colorScheme.background,
-                                              fontSize: 12,
+                                          if (_viewModel.isImageEdited(index))
+                                            Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF22C55E),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: const Icon(
+                                                LucideIcons.check,
+                                                color: Colors.white,
+                                                size: 16,
+                                              ),
+                                            ),
+                                          const SizedBox(width: 8),
+                                          GestureDetector(
+                                            onTap: () => _deletePage(index),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                color: theme
+                                                    .colorScheme.destructive
+                                                    .withValues(alpha: 0.9),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: const Icon(
+                                                LucideIcons.trash2,
+                                                color: Colors.white,
+                                                size: 16,
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
+                                    // Подсказка "нажмите для редактирования"
+                                    Positioned(
+                                      bottom: 8,
+                                      left: 0,
+                                      right: 0,
+                                      child: Center(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: theme.colorScheme.foreground
+                                                .withValues(alpha: 0.7),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(LucideIcons.penTool,
+                                                  size: 12,
+                                                  color: theme
+                                                      .colorScheme.background),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                'Нажмите для редактирования',
+                                                style: TextStyle(
+                                                  color: theme
+                                                      .colorScheme.background,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+
+              // Нижний список страниц
+              if (_viewModel.hasImages) ...[
+                Divider(color: theme.colorScheme.border),
+                Container(
+                  height: 120,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ReorderableListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _viewModel.scannedImages.length,
+                    onReorder: (oldIndex, newIndex) {
+                      if (newIndex > oldIndex) newIndex--;
+                      _viewModel.movePage(oldIndex, newIndex);
+                      _saveDocument();
+                    },
+                    proxyDecorator: (child, index, animation) {
+                      return Material(
+                        elevation: 4,
+                        borderRadius: theme.radius,
+                        child: child,
+                      );
+                    },
+                    itemBuilder: (context, index) {
+                      final isSelected = index == _viewModel.currentPageIndex;
+                      return GestureDetector(
+                        key: ValueKey('page_$index'),
+                        onTap: () {
+                          _viewModel.setCurrentPage(index);
+                          _pageController.animateToPage(
+                            index,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: 80,
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isSelected
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.border,
+                              width: isSelected ? 2 : 1,
+                            ),
+                            borderRadius: theme.radius,
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: theme.colorScheme.primary
+                                          .withValues(alpha: 0.3),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: theme.radius,
+                            child: Stack(
+                              children: [
+                                SizedBox(
+                                  width: 80,
+                                  height: 100,
+                                  child: _viewModel.buildImageWidget(index),
+                                ),
+                                // Номер страницы
+                                Positioned(
+                                  bottom: 4,
+                                  left: 4,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.foreground
+                                          .withValues(alpha: 0.8),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      '${index + 1}',
+                                      style: TextStyle(
+                                        color: theme.colorScheme.background,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
+                                // Индикатор редактирования
+                                if (_viewModel.isImageEdited(index))
+                                  Positioned(
+                                    top: 4,
+                                    right: 4,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF22C55E),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Icon(
+                                        LucideIcons.check,
+                                        color: Colors.white,
+                                        size: 12,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -743,127 +861,11 @@ class _PdfScreenState extends State<PdfScreen> {
                       );
                     },
                   ),
+                ),
+              ],
+            ],
           ),
-
-          // Нижний список страниц
-          if (_viewModel.hasImages) ...[
-            Divider(color: theme.colorScheme.border),
-            Container(
-              height: 120,
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: ReorderableListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _viewModel.scannedImages.length,
-                onReorder: (oldIndex, newIndex) {
-                  if (newIndex > oldIndex) newIndex--;
-                  _viewModel.movePage(oldIndex, newIndex);
-                  _saveDocument();
-                },
-                proxyDecorator: (child, index, animation) {
-                  return Material(
-                    elevation: 4,
-                    borderRadius: theme.radius,
-                    child: child,
-                  );
-                },
-                itemBuilder: (context, index) {
-                  final isSelected = index == _viewModel.currentPageIndex;
-                  return GestureDetector(
-                    key: ValueKey('page_$index'),
-                    onTap: () {
-                      _viewModel.setCurrentPage(index);
-                      _pageController.animateToPage(
-                        index,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 80,
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isSelected
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.border,
-                          width: isSelected ? 2 : 1,
-                        ),
-                        borderRadius: theme.radius,
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: theme.colorScheme.primary
-                                      .withValues(alpha: 0.3),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: theme.radius,
-                        child: Stack(
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              height: 100,
-                              child: _viewModel.buildImageWidget(index),
-                            ),
-                            // Номер страницы
-                            Positioned(
-                              bottom: 4,
-                              left: 4,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.foreground
-                                      .withValues(alpha: 0.8),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  '${index + 1}',
-                                  style: TextStyle(
-                                    color: theme.colorScheme.background,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Индикатор редактирования
-                            if (_viewModel.isImageEdited(index))
-                              Positioned(
-                                top: 4,
-                                right: 4,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF22C55E),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: const Icon(
-                                    LucideIcons.check,
-                                    color: Colors.white,
-                                    size: 12,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
+        ));
   }
 }
 

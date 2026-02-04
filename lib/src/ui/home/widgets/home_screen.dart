@@ -7,6 +7,10 @@ import '../../../core/config/images.dart';
 import '../../../core/models/document_model.dart';
 import '../../../core/router/app_navigator.dart';
 import '../../../core/services/subscription_service.dart';
+import '../../components/app_card.dart';
+import '../../components/app_header.dart';
+import '../../components/empty_state.dart';
+import '../../components/scanner_button.dart';
 import '../../paywall/paywall_screen.dart';
 import '../../pdf/widgets/pdf_screen.dart';
 import '../view_model/home_viewmodel.dart';
@@ -272,18 +276,13 @@ class _MainScreenState extends State<MainScreen> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        child: Image.asset(AppImages.logoSmall),
-                      ),
-                      // Кнопка Premium (если не подписчик)
+                  AppHeader(
+                    title: 'Pixel Scan',
+                    actions: [
                       if (!widget.subscriptionService.isPremiumUser)
                         GestureDetector(
                           onTap: () {
@@ -312,7 +311,17 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 26),
+                  
+                  // Поиск
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: ShadInput(
+                      placeholder: const Text('Поиск документов...'),
+                      leading: const Icon(LucideIcons.search, size: 16),
+                      onChanged: (value) => _viewModel.setSearchQuery(value),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
 
                   // Контент - список документов или пустое состояние
                   Expanded(
@@ -328,43 +337,14 @@ class _MainScreenState extends State<MainScreen> {
 
             // Кнопка сканирования
             Positioned(
-              bottom: 10,
-              right: 64,
-              left: 64,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    height: 68,
-                    decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x14343434),
-                          offset: Offset(0, 0),
-                          blurRadius: 24,
-                          spreadRadius: 0,
-                        ),
-                      ],
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(88),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: (_viewModel.isScanning || _viewModel.isImporting)
-                        ? null
-                        : _showImportOptions,
-                    child: (_viewModel.isScanning || _viewModel.isImporting)
-                        ? const SizedBox(
-                            height: 60,
-                            width: 60,
-                            child: CircularProgressIndicator(),
-                          )
-                        : SizedBox(
-                            height: 100,
-                            child: Image.asset(AppImages.buttonScanner),
-                          ),
-                  ),
-                ],
+              bottom: 24,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: ScannerButton(
+                  isLoading: _viewModel.isScanning || _viewModel.isImporting,
+                  onPressed: _showImportOptions,
+                ),
               ),
             ),
           ],
@@ -374,72 +354,47 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: SizedBox(
-        width: double.infinity,
-        child: ShadCard(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: SizedBox(
-                    height: 180,
-                    child: Image.asset(AppImages.documents),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: Text(
-                    'No documents found',
-                    style: ShadTheme.of(context).textTheme.h4,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Tap the button below to scan\nor convert to PDF',
-                  style: ShadTheme.of(context).textTheme.muted,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+    return EmptyState(
+      icon: LucideIcons.files,
+      title: 'Нет документов',
+      description: 'Нажмите кнопку сканирования,\nчтобы добавить первый документ',
     );
   }
 
   Widget _buildDocumentsList() {
+    final documents = _viewModel.filteredDocuments;
+    final theme = ShadTheme.of(context);
+    
+    if (documents.isEmpty) {
+      return EmptyState(
+        icon: LucideIcons.searchX,
+        title: 'Ничего не найдено',
+        description: 'Попробуйте изменить запрос поиска',
+      );
+    }
+  
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Мои документы',
-              style: TextStyle(
-                fontSize: 21,
-                fontWeight: FontWeight.w500,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Мои документы', style: theme.textTheme.h4),
+              Text(
+                '${documents.length} шт.',
+                style: theme.textTheme.muted,
               ),
-            ),
-            Text(
-              '${_viewModel.documents.length} документов',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 16),
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.only(bottom: 100),
-            itemCount: _viewModel.documents.length,
+            itemCount: documents.length,
             itemBuilder: (context, index) {
-              final document = _viewModel.documents[index];
+              final document = documents[index];
               return _DocumentCard(
                 document: document,
                 onTap: () => _openDocument(document),
@@ -473,73 +428,87 @@ class _DocumentCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: ShadCard(
-        padding: EdgeInsets.zero,
-        child: InkWell(
-          onTap: onTap,
-          onLongPress: onLongPress,
-          borderRadius: theme.radius,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                // Превью первой страницы
-                Container(
-                  width: 60,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: theme.colorScheme.border),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: document.imagePaths.isNotEmpty
-                      ? Image.file(
-                          File(document.imagePaths.first),
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Icon(
-                            LucideIcons.fileText,
-                            size: 30,
-                            color: theme.colorScheme.muted,
-                          ),
-                        )
-                      : Icon(
-                          LucideIcons.fileText,
-                          size: 30,
-                          color: theme.colorScheme.muted,
-                        ),
-                ),
-                const SizedBox(width: 12),
-
-                // Информация о документе
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        document.name,
-                        style: theme.textTheme.p.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+      child: AppCard(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            // Превью первой страницы
+            Container(
+              width: 60,
+              height: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: theme.colorScheme.border),
+                color: theme.colorScheme.muted.withValues(alpha: 0.1),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: document.imagePaths.isNotEmpty
+                  ? Image.file(
+                      File(document.imagePaths.first),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Icon(
+                        LucideIcons.fileText,
+                        size: 30,
+                        color: theme.colorScheme.muted,
                       ),
-                      const SizedBox(height: 4),
+                    )
+                  : Icon(
+                      LucideIcons.fileText,
+                      size: 30,
+                      color: theme.colorScheme.muted,
+                    ),
+            ),
+            const SizedBox(width: 16),
+
+            // Информация о документе
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    document.name,
+                    style: theme.textTheme.p.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(LucideIcons.file, 
+                        size: 14, 
+                        color: theme.colorScheme.mutedForeground
+                      ),
+                      const SizedBox(width: 4),
                       Text(
-                        '${document.pageCount} страниц • ${document.formattedDate}',
+                        '${document.pageCount} стр.',
+                        style: theme.textTheme.muted,
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(LucideIcons.calendar, 
+                        size: 14, 
+                        color: theme.colorScheme.mutedForeground
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        document.formattedDate,
                         style: theme.textTheme.muted,
                       ),
                     ],
                   ),
-                ),
-
-                // Кнопка опций
-                ShadIconButton.ghost(
-                  icon: const Icon(LucideIcons.ellipsisVertical, size: 20),
-                  onPressed: onMoreTap,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+
+            // Кнопка опций
+            ShadIconButton.ghost(
+              icon: const Icon(LucideIcons.ellipsisVertical, size: 20),
+              onPressed: onMoreTap,
+            ),
+          ],
         ),
       ),
     );
