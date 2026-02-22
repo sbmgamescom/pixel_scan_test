@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -10,6 +9,8 @@ class AppCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final double? width;
   final double? height;
+  final Color? backgroundColor;
+  final Color? borderColor;
 
   const AppCard({
     super.key,
@@ -20,6 +21,8 @@ class AppCard extends StatelessWidget {
     this.margin,
     this.width,
     this.height,
+    this.backgroundColor,
+    this.borderColor,
   });
 
   @override
@@ -31,9 +34,9 @@ class AppCard extends StatelessWidget {
       height: height,
       margin: margin,
       decoration: BoxDecoration(
-        color: theme.colorScheme.card,
+        color: backgroundColor ?? theme.colorScheme.card,
         borderRadius: theme.radius,
-        border: Border.all(color: theme.colorScheme.border),
+        border: Border.all(color: borderColor ?? theme.colorScheme.border),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0A000000),

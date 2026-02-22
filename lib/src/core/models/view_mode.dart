@@ -1,0 +1,4 @@
+enum DocumentViewMode {
+  list,
+  grid,
+}

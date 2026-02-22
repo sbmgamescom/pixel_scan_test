@@ -6,9 +6,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/document_model.dart';
+import '../models/folder_model.dart';
 
 class DocumentStorageService {
   static const String _documentsKey = 'saved_documents';
+  static const String _foldersKey = 'saved_folders';
 
   /// Получить директорию для хранения изображений документов
   static Future<Directory> _getDocumentsDirectory() async {
@@ -204,5 +206,89 @@ class DocumentStorageService {
       }
     }
     return null;
+  }
+
+  // --- УПРАВЛЕНИЕ ПАПКАМИ ---
+
+  /// Сохранить (или обновить) папку
+  static Future<FolderModel> saveFolder(FolderModel folder) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final folders = await loadAllFolders();
+
+      final existingIndex = folders.indexWhere((f) => f.id == folder.id);
+      if (existingIndex != -1) {
+        folders[existingIndex] = folder;
+      } else {
+        folders.add(folder);
+      }
+
+      final foldersJson = folders.map((f) => f.toJson()).toList();
+      await prefs.setString(_foldersKey, jsonEncode(foldersJson));
+
+      return folder;
+    } catch (e) {
+      dev.log('Ошибка сохранения папки: $e');
+      rethrow;
+    }
+  }
+
+  /// Загрузить все папки
+  static Future<List<FolderModel>> loadAllFolders() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString(_foldersKey);
+
+      if (jsonString == null || jsonString.isEmpty) {
+        return [];
+      }
+
+      final List<dynamic> foldersJson = jsonDecode(jsonString);
+      final folders = foldersJson
+          .map((json) => FolderModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      // Сортируем (например, по алфавиту)
+      folders
+          .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+
+      return folders;
+    } catch (e) {
+      dev.log('Ошибка загрузки папок: $e');
+      return [];
+    }
+  }
+
+  /// Удалить папку (документы из неё перемещаются в корень, то есть folderId = null)
+  static Future<void> deleteFolder(String folderId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Удаляем саму папку
+      final folders = await loadAllFolders();
+      folders.removeWhere((f) => f.id == folderId);
+      final foldersJson = folders.map((f) => f.toJson()).toList();
+      await prefs.setString(_foldersKey, jsonEncode(foldersJson));
+
+      // Отвязываем документы от этой папки
+      final documents = await loadAllDocuments();
+      bool hasChanges = false;
+      for (int i = 0; i < documents.length; i++) {
+        if (documents[i].folderId == folderId) {
+          documents[i] = documents[i].copyWith(clearFolderId: true);
+          hasChanges = true;
+        }
+      }
+
+      if (hasChanges) {
+        final docsJson = documents.map((d) => d.toJson()).toList();
+        await prefs.setString(_documentsKey, jsonEncode(docsJson));
+      }
+
+      dev.log('Папка удалена: $folderId');
+    } catch (e) {
+      dev.log('Ошибка удаления папки: $e');
+      rethrow;
+    }
   }
 }

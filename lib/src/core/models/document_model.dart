@@ -8,6 +8,7 @@ class DocumentModel {
   final Map<int, Uint8List?> editedImages;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final String? folderId;
 
   DocumentModel({
     required this.id,
@@ -16,6 +17,7 @@ class DocumentModel {
     Map<int, Uint8List?>? editedImages,
     DateTime? createdAt,
     this.updatedAt,
+    this.folderId,
   })  : editedImages = editedImages ?? {},
         createdAt = createdAt ?? DateTime.now();
 
@@ -26,6 +28,8 @@ class DocumentModel {
     Map<int, Uint8List?>? editedImages,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? folderId,
+    bool clearFolderId = false,
   }) {
     return DocumentModel(
       id: id ?? this.id,
@@ -33,7 +37,8 @@ class DocumentModel {
       imagePaths: imagePaths ?? this.imagePaths,
       editedImages: editedImages ?? this.editedImages,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? DateTime.now(),
+      updatedAt: updatedAt ?? this.updatedAt,
+      folderId: clearFolderId ? null : (folderId ?? this.folderId),
     );
   }
 
@@ -124,6 +129,7 @@ class DocumentModel {
       'editedImages': editedImagesJson,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt?.millisecondsSinceEpoch,
+      'folderId': folderId,
     };
   }
 
@@ -148,6 +154,7 @@ class DocumentModel {
       updatedAt: json['updatedAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(json['updatedAt'] as int)
           : null,
+      folderId: json['folderId'] as String?,
     );
   }
 
