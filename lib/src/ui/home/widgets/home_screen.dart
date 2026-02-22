@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import '../../../core/config/images.dart';
 import '../../../core/models/document_model.dart';
 import '../../../core/router/app_navigator.dart';
 import '../../../core/services/subscription_service.dart';
@@ -281,7 +280,7 @@ class _MainScreenState extends State<MainScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppHeader(
-                    title: 'Pixel Scan',
+                    title: 'Pocket Scan',
                     actions: [
                       if (!widget.subscriptionService.isPremiumUser)
                         GestureDetector(
@@ -311,7 +310,7 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                     ],
                   ),
-                  
+
                   // Поиск
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -319,7 +318,8 @@ class _MainScreenState extends State<MainScreen> {
                       placeholder: const Text('Поиск документов...'),
                       leading: const Icon(LucideIcons.search, size: 16),
                       onChanged: (value) => _viewModel.setSearchQuery(value),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                     ),
                   ),
 
@@ -357,14 +357,15 @@ class _MainScreenState extends State<MainScreen> {
     return EmptyState(
       icon: LucideIcons.files,
       title: 'Нет документов',
-      description: 'Нажмите кнопку сканирования,\nчтобы добавить первый документ',
+      description:
+          'Нажмите кнопку сканирования,\nчтобы добавить первый документ',
     );
   }
 
   Widget _buildDocumentsList() {
     final documents = _viewModel.filteredDocuments;
     final theme = ShadTheme.of(context);
-    
+
     if (documents.isEmpty) {
       return EmptyState(
         icon: LucideIcons.searchX,
@@ -372,7 +373,7 @@ class _MainScreenState extends State<MainScreen> {
         description: 'Попробуйте изменить запрос поиска',
       );
     }
-  
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -478,20 +479,16 @@ class _DocumentCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(LucideIcons.file, 
-                        size: 14, 
-                        color: theme.colorScheme.mutedForeground
-                      ),
+                      Icon(LucideIcons.file,
+                          size: 14, color: theme.colorScheme.mutedForeground),
                       const SizedBox(width: 4),
                       Text(
                         '${document.pageCount} стр.',
                         style: theme.textTheme.muted,
                       ),
                       const SizedBox(width: 12),
-                      Icon(LucideIcons.calendar, 
-                        size: 14, 
-                        color: theme.colorScheme.mutedForeground
-                      ),
+                      Icon(LucideIcons.calendar,
+                          size: 14, color: theme.colorScheme.mutedForeground),
                       const SizedBox(width: 4),
                       Text(
                         document.formattedDate,

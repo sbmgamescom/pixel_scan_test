@@ -1,4 +1,4 @@
-package com.example.pixel_scan_test
+package com.pocket.scanner
 
 import io.flutter.embedding.android.FlutterActivity
 
