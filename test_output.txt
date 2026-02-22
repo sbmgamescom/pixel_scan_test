@@ -1,0 +1,78 @@
+00:00 +0: loading /Users/bekzatsakutov/WorkPrograms/pixel_scan_test/test/src/ui/pdf/widgets/pdf_screen_premium_test.dart                                                                               00:01 +0: loading /Users/bekzatsakutov/WorkPrograms/pixel_scan_test/test/src/ui/pdf/widgets/pdf_screen_premium_test.dart                                                                               00:02 +0: loading /Users/bekzatsakutov/WorkPrograms/pixel_scan_test/test/src/ui/pdf/widgets/pdf_screen_premium_test.dart                                                                               00:03 +0: loading /Users/bekzatsakutov/WorkPrograms/pixel_scan_test/test/src/ui/pdf/widgets/pdf_screen_premium_test.dart                                                                               00:03 +0: PdfScreen Premium Guard Tests Shows Paywall when free user taps Export, Print, or Share                                                                                                      00:04 +0: PdfScreen Premium Guard Tests Shows Paywall when free user taps Export, Print, or Share                                                                                                      00:04 +0: PdfScreen Premium Guard Tests Shows Paywall when free user taps Export, Print, or Share                                                                                                      
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building PaywallScreen(dirty, dependencies:
+[ShadInheritedTheme], state: _PaywallScreenState#1b286):
+Bad state: No element
+
+The relevant error-causing widget was:
+  PaywallScreen
+  PaywallScreen:file:///Users/bekzatsakutov/WorkPrograms/pixel_scan_test/lib/src/ui/pdf/widgets/pdf_screen.dart:368:31
+
+When the exception was thrown, this was the stack:
+#0      List.first (dart:core-patch/growable_array.dart:352:5)
+#1      _PaywallScreenState._buildFooter.<anonymous closure> (package:pixel_scan_test/src/ui/paywall/paywall_screen.dart:438:31)
+#2      ListBase.firstWhere (dart:collection/list.dart:131:38)
+#3      _PaywallScreenState._buildFooter (package:pixel_scan_test/src/ui/paywall/paywall_screen.dart:436:39)
+#4      _PaywallScreenState._buildContent (package:pixel_scan_test/src/ui/paywall/paywall_screen.dart:215:9)
+#5      _PaywallScreenState.build (package:pixel_scan_test/src/ui/paywall/paywall_screen.dart:176:65)
+#6      StatefulElement.build (package:flutter/src/widgets/framework.dart:5833:27)
+#7      ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5723:15)
+#8      StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5884:11)
+#9      Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#10     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2695:15)
+#11     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2752:11)
+#12     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3056:18)
+#13     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1506:19)
+#14     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#15     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1434:15)
+#16     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1347:9)
+#17     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1335:9)
+#20     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#21     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1324:27)
+#22     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+<asynchronous suspension>
+#23     TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#24     main.<anonymous closure>.<anonymous closure> (file:///Users/bekzatsakutov/WorkPrograms/pixel_scan_test/test/src/ui/pdf/widgets/pdf_screen_premium_test.dart:125:7)
+<asynchronous suspension>
+#25     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#26     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Безлимитное сканирование": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Users/bekzatsakutov/WorkPrograms/pixel_scan_test/test/src/ui/pdf/widgets/pdf_screen_premium_test.dart:127:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/bekzatsakutov/WorkPrograms/pixel_scan_test/test/src/ui/pdf/widgets/pdf_screen_premium_test.dart line 127
+The test description was:
+  Shows Paywall when free user taps Export, Print, or Share
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -1: PdfScreen Premium Guard Tests Shows Paywall when free user taps Export, Print, or Share [E]                                                                                               
+  Test failed. See exception logs above.
+  The test description was: Shows Paywall when free user taps Export, Print, or Share
+  
+
+To run this test again: /Users/bekzatsakutov/Utils/flutter/bin/cache/dart-sdk/bin/dart test /Users/bekzatsakutov/WorkPrograms/pixel_scan_test/test/src/ui/pdf/widgets/pdf_screen_premium_test.dart -p vm --plain-name 'PdfScreen Premium Guard Tests Shows Paywall when free user taps Export, Print, or Share'
+00:04 +0 -1: PdfScreen Premium Guard Tests Premium users see Export Dialog instead of Paywall                                                                                                          00:04 +1 -1: PdfScreen Premium Guard Tests Premium users see Export Dialog instead of Paywall                                                                                                          00:04 +1 -1: Some tests failed.                                                                                                                                                                        

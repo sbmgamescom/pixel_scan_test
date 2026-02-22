@@ -9,9 +9,22 @@ import 'package:printing/printing.dart';
 
 import '../models/document_model.dart';
 
+class PdfExportSettings {
+  final PdfPageFormat pageFormat;
+  final double margin;
+
+  const PdfExportSettings({
+    this.pageFormat = PdfPageFormat.a4,
+    this.margin = 0.0,
+  });
+}
+
 class PdfExportService {
   /// Генерирует PDF из документа и возвращает путь к файлу
-  static Future<String> generatePdf(DocumentModel document) async {
+  static Future<String> generatePdf(
+    DocumentModel document, {
+    PdfExportSettings settings = const PdfExportSettings(),
+  }) async {
     try {
       final pdf = pw.Document();
 
@@ -31,8 +44,8 @@ class PdfExportService {
 
         pdf.addPage(
           pw.Page(
-            pageFormat: PdfPageFormat.a4,
-            margin: pw.EdgeInsets.zero,
+            pageFormat: settings.pageFormat,
+            margin: pw.EdgeInsets.all(settings.margin),
             build: (pw.Context context) {
               return pw.Center(
                 child: pw.Image(
@@ -66,7 +79,10 @@ class PdfExportService {
   }
 
   /// Генерирует PDF и возвращает байты (для шаринга без сохранения)
-  static Future<Uint8List> generatePdfBytes(DocumentModel document) async {
+  static Future<Uint8List> generatePdfBytes(
+    DocumentModel document, {
+    PdfExportSettings settings = const PdfExportSettings(),
+  }) async {
     try {
       final pdf = pw.Document();
 
@@ -86,8 +102,8 @@ class PdfExportService {
 
         pdf.addPage(
           pw.Page(
-            pageFormat: PdfPageFormat.a4,
-            margin: pw.EdgeInsets.zero,
+            pageFormat: settings.pageFormat,
+            margin: pw.EdgeInsets.all(settings.margin),
             build: (pw.Context context) {
               return pw.Center(
                 child: pw.Image(
@@ -108,9 +124,12 @@ class PdfExportService {
   }
 
   /// Печать документа
-  static Future<void> printDocument(DocumentModel document) async {
+  static Future<void> printDocument(
+    DocumentModel document, {
+    PdfExportSettings settings = const PdfExportSettings(),
+  }) async {
     try {
-      final pdfBytes = await generatePdfBytes(document);
+      final pdfBytes = await generatePdfBytes(document, settings: settings);
       await Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => pdfBytes,
         name: document.name,
@@ -122,9 +141,12 @@ class PdfExportService {
   }
 
   /// Предпросмотр PDF перед печатью
-  static Future<void> previewAndPrint(DocumentModel document) async {
+  static Future<void> previewAndPrint(
+    DocumentModel document, {
+    PdfExportSettings settings = const PdfExportSettings(),
+  }) async {
     try {
-      final pdfBytes = await generatePdfBytes(document);
+      final pdfBytes = await generatePdfBytes(document, settings: settings);
       await Printing.sharePdf(
         bytes: pdfBytes,
         filename: '${document.name}.pdf',

@@ -1,6 +1,8 @@
-import 'dart:typed_data';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 
 import '../../../core/models/document_model.dart';
 import '../../../core/repositories/document_scan_repository.dart';
@@ -14,6 +16,8 @@ class PdfViewModel extends ChangeNotifier {
   DocumentModel? _document;
   bool _isLoading = false;
   int _currentPageIndex = 0;
+  bool _isSelectionMode = false;
+  final Set<int> _selectedPages = {};
 
   DocumentModel? get document => _document;
   List<String> get scannedImages => _document?.imagePaths ?? [];
@@ -22,6 +26,8 @@ class PdfViewModel extends ChangeNotifier {
   bool get hasImages => _document?.hasImages ?? false;
   int get currentPageIndex => _currentPageIndex;
   int get totalPages => scannedImages.length;
+  bool get isSelectionMode => _isSelectionMode;
+  Set<int> get selectedPages => _selectedPages;
 
   /// Загрузить существующий документ
   void loadDocument(DocumentModel document) {
@@ -39,6 +45,35 @@ class PdfViewModel extends ChangeNotifier {
 
   void _setLoading(bool loading) {
     _isLoading = loading;
+    notifyListeners();
+  }
+
+  void toggleSelectionMode() {
+    _isSelectionMode = !_isSelectionMode;
+    if (!_isSelectionMode) {
+      _selectedPages.clear();
+    }
+    notifyListeners();
+  }
+
+  void togglePageSelection(int index) {
+    if (_selectedPages.contains(index)) {
+      _selectedPages.remove(index);
+    } else {
+      _selectedPages.add(index);
+    }
+    notifyListeners();
+  }
+
+  void selectAllPages() {
+    if (_document != null) {
+      _selectedPages.addAll(List.generate(totalPages, (i) => i));
+      notifyListeners();
+    }
+  }
+
+  void clearSelection() {
+    _selectedPages.clear();
     notifyListeners();
   }
 
@@ -106,6 +141,38 @@ class PdfViewModel extends ChangeNotifier {
     );
   }
 
+  /// Быстрый поворот страницы (на 90 градусов по часовой стрелке)
+  Future<void> rotatePage(int index) async {
+    if (_document == null ||
+        index < 0 ||
+        index >= _document!.imagePaths.length) {
+      return;
+    }
+
+    try {
+      _setLoading(true);
+
+      Uint8List sourceBytes;
+      if (_document!.editedImages.containsKey(index) &&
+          _document!.editedImages[index] != null) {
+        sourceBytes = _document!.editedImages[index]!;
+      } else {
+        sourceBytes = await File(_document!.imagePaths[index]).readAsBytes();
+      }
+
+      // Выполняем поворот в отдельном изоляте, чтобы не блокировать UI
+      final rotatedBytes = await compute(_rotateImageBytes, sourceBytes);
+
+      await _saveEditedImage(_document!.imagePaths[index], index, rotatedBytes);
+    } catch (e) {
+      debugPrint('Ошибка поворота изображения: $e');
+    } finally {
+      if (!isDisposed) {
+        _setLoading(false);
+      }
+    }
+  }
+
   Future<void> addPages() async {
     try {
       _setLoading(true);
@@ -139,7 +206,40 @@ class PdfViewModel extends ChangeNotifier {
     if (_document != null && _document!.pageCount > 1) {
       _document = _document!.removePage(index);
 
+      // Очищаем выделение, так как индексы сместились
+      _selectedPages.clear();
+
       // Корректируем текущий индекс
+      if (_currentPageIndex >= _document!.pageCount) {
+        _currentPageIndex = _document!.pageCount - 1;
+      }
+
+      notifyListeners();
+    }
+  }
+
+  /// Удалить выбранные страницы
+  void deleteSelectedPages() {
+    if (_document != null && _selectedPages.isNotEmpty) {
+      // Если пытаются удалить все страницы, оставляем хотя бы одну (или удаляем документ целиком?)
+      // Для безопасности лучше запретить удаление последней страницы
+      if (_selectedPages.length >= _document!.pageCount) {
+        return; // Нельзя удалить все страницы
+      }
+
+      // Сортируем индексы по убыванию, чтобы удаление не смещало оставшиеся индексы
+      final sortedIndices = _selectedPages.toList()
+        ..sort((a, b) => b.compareTo(a));
+      var tempDoc = _document!;
+      for (final index in sortedIndices) {
+        tempDoc = tempDoc.removePage(index);
+      }
+      _document = tempDoc;
+
+      _selectedPages.clear();
+      _isSelectionMode = false;
+
+      // Сброс индекса
       if (_currentPageIndex >= _document!.pageCount) {
         _currentPageIndex = _document!.pageCount - 1;
       }
@@ -152,6 +252,8 @@ class PdfViewModel extends ChangeNotifier {
   void movePage(int oldIndex, int newIndex) {
     if (_document != null) {
       _document = _document!.movePage(oldIndex, newIndex);
+
+      _selectedPages.clear(); // Сбрасываем выбор при перемещении
 
       // Корректируем текущий индекс
       if (_currentPageIndex == oldIndex) {
@@ -263,4 +365,20 @@ class PdfViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+
+  bool isDisposed = false;
+
+  @override
+  void dispose() {
+    isDisposed = true;
+    super.dispose();
+  }
+}
+
+/// Выполняется в изоляте (должна быть глобальной или статической функцией)
+Uint8List _rotateImageBytes(Uint8List bytes) {
+  final image = img.decodeImage(bytes);
+  if (image == null) return bytes;
+  final rotated = img.copyRotate(image, angle: 90);
+  return Uint8List.fromList(img.encodeJpg(rotated, quality: 90));
 }

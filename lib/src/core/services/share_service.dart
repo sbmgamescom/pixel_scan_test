@@ -8,10 +8,14 @@ import 'pdf_export_service.dart';
 
 class ShareService {
   /// Поделиться документом как PDF
-  static Future<void> sharePdf(DocumentModel document) async {
+  static Future<void> sharePdf(
+    DocumentModel document, {
+    PdfExportSettings settings = const PdfExportSettings(),
+  }) async {
     try {
       // Генерируем PDF
-      final pdfPath = await PdfExportService.generatePdf(document);
+      final pdfPath =
+          await PdfExportService.generatePdf(document, settings: settings);
       final pdfFile = XFile(pdfPath);
 
       // Шарим файл
