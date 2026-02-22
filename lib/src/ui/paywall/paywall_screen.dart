@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../../src/components/loading_overlay.dart';
 import '../../core/models/subscription_models.dart';
 import '../../core/services/subscription_service.dart';
 
@@ -150,32 +151,34 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.colorScheme.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Кнопка закрытия
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  ShadIconButton.ghost(
-                    icon: const Icon(LucideIcons.x, size: 24),
-                    onPressed: () => Navigator.pop(context, false),
+    return LoadingOverlay(
+        isLoading: _isLoading,
+        child: Scaffold(
+          backgroundColor: theme.colorScheme.background,
+          body: SafeArea(
+            child: Column(
+              children: [
+                // Кнопка закрытия
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    children: [
+                      ShadIconButton.ghost(
+                        icon: const Icon(LucideIcons.x, size: 24),
+                        onPressed: () => Navigator.pop(context, false),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-            // Контент
-            Expanded(
-              child: _isProductsLoading ? _buildLoading() : _buildContent(),
+                // Контент
+                Expanded(
+                  child: _isProductsLoading ? _buildLoading() : _buildContent(),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget _buildLoading() {

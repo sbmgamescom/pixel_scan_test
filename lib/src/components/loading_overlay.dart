@@ -98,18 +98,24 @@ class LoadingOverlayState extends State<LoadingOverlay>
         child: Stack(
           children: <Widget>[
             BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
                 color: widget.color ?? Colors.black.withOpacity(0.3),
               ),
             ),
-            Center(child: Text('One moment, please wait...')),
+            Center(
+              child: Image.asset(
+                'assets/images/logo_small.png',
+                width: 120,
+                height: 120,
+              ),
+            ),
           ],
         ),
       );
       widgets.add(modal);
     }
 
-    return Scaffold(body: Stack(children: widgets));
+    return Stack(children: widgets);
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../../components/loading_overlay.dart';
 import '../../../core/models/document_model.dart';
 import '../../../core/router/app_navigator.dart';
 import '../../../core/services/subscription_service.dart';
@@ -270,87 +271,93 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppHeader(
-                    title: 'Pocket Scan',
-                    actions: [
-                      if (!widget.subscriptionService.isPremiumUser)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PaywallScreen(
-                                  source: 'home',
-                                  subscriptionService:
-                                      widget.subscriptionService,
+    return LoadingOverlay(
+        isLoading: _viewModel.isLoading ||
+            _viewModel.isScanning ||
+            _viewModel.isImporting,
+        child: Scaffold(
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppHeader(
+                        title: 'Pocket Scan',
+                        actions: [
+                          if (!widget.subscriptionService.isPremiumUser)
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaywallScreen(
+                                      source: 'home',
+                                      subscriptionService:
+                                          widget.subscriptionService,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: ShadBadge(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(LucideIcons.sparkles,
+                                        size: 14, color: Colors.white),
+                                    const SizedBox(width: 4),
+                                    const Text('Premium'),
+                                  ],
                                 ),
                               ),
-                            );
-                          },
-                          child: ShadBadge(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(LucideIcons.sparkles,
-                                    size: 14, color: Colors.white),
-                                const SizedBox(width: 4),
-                                const Text('Premium'),
-                              ],
                             ),
-                          ),
+                        ],
+                      ),
+
+                      // Поиск
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: ShadInput(
+                          placeholder: const Text('Поиск документов...'),
+                          leading: const Icon(LucideIcons.search, size: 16),
+                          onChanged: (value) =>
+                              _viewModel.setSearchQuery(value),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                         ),
+                      ),
+
+                      // Контент - список документов или пустое состояние
+                      Expanded(
+                        child: _viewModel.isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : _viewModel.hasDocuments
+                                ? _buildDocumentsList()
+                                : _buildEmptyState(),
+                      ),
                     ],
                   ),
+                ),
 
-                  // Поиск
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: ShadInput(
-                      placeholder: const Text('Поиск документов...'),
-                      leading: const Icon(LucideIcons.search, size: 16),
-                      onChanged: (value) => _viewModel.setSearchQuery(value),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                // Кнопка сканирования
+                Positioned(
+                  bottom: 24,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: ScannerButton(
+                      isLoading:
+                          _viewModel.isScanning || _viewModel.isImporting,
+                      onPressed: _showImportOptions,
                     ),
                   ),
-
-                  // Контент - список документов или пустое состояние
-                  Expanded(
-                    child: _viewModel.isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : _viewModel.hasDocuments
-                            ? _buildDocumentsList()
-                            : _buildEmptyState(),
-                  ),
-                ],
-              ),
-            ),
-
-            // Кнопка сканирования
-            Positioned(
-              bottom: 24,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ScannerButton(
-                  isLoading: _viewModel.isScanning || _viewModel.isImporting,
-                  onPressed: _showImportOptions,
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget _buildEmptyState() {
