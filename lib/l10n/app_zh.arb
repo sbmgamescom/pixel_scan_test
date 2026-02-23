@@ -1,0 +1,166 @@
+{
+  "appTitle": "Pixel Scan",
+  "homeTitle": "我的文件",
+  "searchHint": "搜索...",
+  "searchDocumentsHint": "搜索文档...",
+  "allDocuments": "所有文档",
+  "allDocumentsNoFolder": "所有文档 (无文件夹)",
+  "emptyDocuments": "暂无文档。点击 '+' 进行扫描。",
+  "noDocumentsTitle": "没有文档",
+  "noDocumentsDesc": "点击扫描按钮\n添加您的第一个文档",
+  "searchNoResultsTitle": "未找到",
+  "searchNoResultsDesc": "请尝试更改搜索词",
+  "scanButton": "扫描",
+  "importGallery": "从相册导入",
+  "settings": "设置",
+  "upgradeToPremium": "升级到高级版",
+  "premiumActive": "高级版已激活",
+  "restorePurchases": "恢复购买",
+  "contactSupport": "联系支持",
+  "privacyPolicy": "隐私政策",
+  "termsOfService": "服务条款",
+  "delete": "删除",
+  "share": "分享",
+  "exportPdf": "导出PDF",
+  "untitledDocument": "无标题文档",
+  "cancel": "取消",
+  "save": "保存",
+  "done": "完成",
+  "premiumRequired": "高级功能",
+  "premiumRequiredDesc": "此功能需要高级订阅。",
+  "unlimitedScans": "无限制扫描和导出",
+  "noAds": "无广告",
+  "highQualityExport": "高质量PDF导出",
+  "subscribe": "立即订阅",
+  "paywallTitle": "解锁高级版",
+  "monthly": "包月",
+  "yearly": "包年",
+  "weekly": "包周",
+  "lifetime": "终身",
+  
+  "open": "打开",
+  "rename": "重命名",
+  "moveToFolder": "移动到文件夹",
+  "addDocument": "添加文档",
+  "addDocumentDesc": "选择添加文档的方式",
+  "scanWithCamera": "用相机扫描",
+  "importPdf": "导入PDF",
+  "importImages": "导入图片",
+  "renameDocument": "重命名文档",
+  "enterNewName": "输入新名称",
+  "documentName": "文档名称",
+  "newFolder": "新建文件夹",
+  "enterFolderName": "输入文件夹名称",
+  "folderName": "文件夹名称",
+  "create": "创建",
+  "moveToFolderTitle": "移动到文件夹",
+  "chooseFolderDesc": "为该文档选择一个文件夹",
+  "deleteDocument": "删除文档",
+  "deleteDocumentDesc": "您确定要删除此文档吗？",
+  "deleteFolder": "删除文件夹？",
+  "deleteFolderDesc": "文件夹将被删除，但其中的文档将保留并移动到主屏幕。",
+  "noFolder": "无文件夹（主页）",
+  "selectedCount": "已选择: {count}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "全选",
+  "premium": "高级版",
+  "managePages": "管理页面",
+  "newDocument": "新文档",
+  "scanning": "正在扫描...",
+  "retake": "重拍",
+  "scanDocument": "扫描文档",
+  "add": "添加",
+  "noScannedImages": "没有扫描的图像",
+  "dragToReorder": "拖动以重新排序",
+  "pageIndex": "第 {index} 页",
+  "@pageIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "edited": "已编辑",
+  "clickToEdit": "点击以编辑",
+  "cannotDeleteAllPages": "不能删除所有页面",
+  "deleteSelectedCount": "删除所选 ({count})",
+  "@deleteSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "scanError": "扫描错误",
+  "addPagesError": "添加页面出错",
+  "saveError": "保存错误",
+  "photosAdded": "照片已添加",
+  "importPhotoError": "导入照片出错",
+  "importPdfError": "导入PDF出错",
+  "pdfImported": "PDF已导入",
+  "pdfSaved": "PDF已保存",
+  "exportError": "导出错误",
+  "printError": "打印错误",
+  "shareError": "分享错误",
+  "pdfExportSettings": "PDF导出设置",
+  "choosePageFormat": "选择页面格式和边距",
+  "continueText": "继续",
+  "pageFormat": "页面格式",
+  "margins": "边距",
+  "noMargins": "无边距 (0)",
+  "narrowMargins": "窄边距 (10)",
+  "defaultMargins": "默认边距 (20)",
+  "cannotDeleteLastPage": "不能删除最后一页",
+  "deletePage": "删除页面？",
+  "deletePageDesc": "您确定要删除此页面吗？",
+  "removeFromFolder": "从文件夹中移除",
+  "pagesCount": "{count} 页",
+  "@pagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallSubtitle": "解锁所有应用功能",
+  "subscriptionLoadError": "加载订阅出错: {error}",
+  "@subscriptionLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "close": "关闭",
+  "advancedEditing": "高级编辑",
+  "exportAndPrint": "导出和打印文档",
+  "unlimitedStorage": "无限制存储",
+  "cloudSync": "云同步",
+  "prioritySupport": "优先支持",
+  "subscriptionsUnavailable": "订阅暂时不可用",
+  "freeTrial": "免费试用",
+  "weeklySubscription": "按周订阅",
+  "monthlySubscription": "按月订阅",
+  "annualSubscription": "按年订阅",
+  "defaultSubscription": "订阅",
+  "weeklyPayment": "每周支付",
+  "monthlyPayment": "每月支付",
+  "annualPayment": "每年支付",
+  "premiumAccess": "高级访问",
+  "purchaseFailed": "购买失败",
+  "errorWithDetail": "错误: {error}",
+  "@errorWithDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noActiveSubscriptions": "未找到有效的订阅"
+}

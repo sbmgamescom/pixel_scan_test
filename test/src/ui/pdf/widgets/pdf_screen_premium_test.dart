@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pixel_scan_test/l10n/app_localizations.dart';
 import 'package:pixel_scan_test/src/core/models/document_model.dart';
 import 'package:pixel_scan_test/src/core/models/subscription_models.dart';
 import 'package:pixel_scan_test/src/core/services/subscription_service.dart';
@@ -99,6 +101,13 @@ void main() {
 
     Widget createTestWidget() {
       return ShadApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         materialThemeBuilder: (context, theme) {
           return theme.copyWith(
             appBarTheme: const AppBarTheme(toolbarHeight: 52),
@@ -127,12 +136,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // 1. Check Export
-      final exportButton = find.text('Экспорт в PDF');
+      final exportButton = find.text('Export PDF');
       expect(exportButton, findsOneWidget);
       await tester.tap(exportButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Unlock Premium Features'), findsOneWidget);
+      expect(find.text('Unlock Premium'), findsOneWidget);
 
       // Close paywall
       final closeButton = find.byIcon(LucideIcons.x);
@@ -143,12 +152,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // 2. Check Print
-      final printButton = find.text('Печать');
+      final printButton = find.text('Print');
       expect(printButton, findsOneWidget);
       await tester.tap(printButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Unlock Premium Features'), findsOneWidget);
+      expect(find.text('Unlock Premium'), findsOneWidget);
       await tester.tap(closeButton);
       await tester.pumpAndSettle();
 
@@ -156,12 +165,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // 3. Check Share
-      final shareButton = find.text('Поделиться');
+      final shareButton = find.text('Share');
       expect(shareButton, findsOneWidget);
       await tester.tap(shareButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Unlock Premium Features'), findsOneWidget);
+      expect(find.text('Unlock Premium'), findsOneWidget);
     });
 
     testWidgets('Premium users see Export Dialog instead of Paywall',
@@ -175,13 +184,13 @@ void main() {
       await tester.tap(moreMenuIcon);
       await tester.pumpAndSettle();
 
-      final exportButton = find.text('Экспорт в PDF');
+      final exportButton = find.text('Export PDF');
       await tester.tap(exportButton);
       await tester.pumpAndSettle();
 
       // Should show the Export Settings Dialog, NOT Paywall
-      expect(find.text('Настройки экспорта PDF'), findsOneWidget);
-      expect(find.text('Unlock Premium Features'), findsNothing);
+      expect(find.text('PDF Export Settings'), findsOneWidget);
+      expect(find.text('Unlock Premium'), findsNothing);
     });
   });
 }

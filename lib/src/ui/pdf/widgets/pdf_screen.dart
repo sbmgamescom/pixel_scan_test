@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
+import 'package:pixel_scan_test/l10n/app_localizations.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../../components/loading_overlay.dart';
@@ -74,7 +75,7 @@ class _PdfScreenState extends State<PdfScreen> {
       if (mounted) {
         ShadToaster.of(context).show(
           ShadToast.destructive(
-            title: const Text('Ошибка сканирования'),
+            title: Text(AppLocalizations.of(context)!.scanError),
             description: Text('$e'),
           ),
         );
@@ -90,7 +91,7 @@ class _PdfScreenState extends State<PdfScreen> {
       if (mounted) {
         ShadToaster.of(context).show(
           ShadToast.destructive(
-            title: const Text('Ошибка добавления страниц'),
+            title: Text(AppLocalizations.of(context)!.addPagesError),
             description: Text('$e'),
           ),
         );
@@ -109,7 +110,7 @@ class _PdfScreenState extends State<PdfScreen> {
         if (mounted) {
           ShadToaster.of(context).show(
             ShadToast.destructive(
-              title: const Text('Ошибка сохранения'),
+              title: Text(AppLocalizations.of(context)!.saveError),
               description: Text('$e'),
             ),
           );
@@ -126,9 +127,8 @@ class _PdfScreenState extends State<PdfScreen> {
       if (mounted) {
         ShadToaster.of(context).show(
           ShadToast(
-            title: const Text('✅ Фото добавлены'),
-            description: Text(
-                'Добавлено ${_viewModel.document?.imagePaths.length ?? 0} фотографий'),
+            title: Text('✅ ${AppLocalizations.of(context)!.photosAdded}'),
+            description: Text('${_viewModel.document?.imagePaths.length ?? 0}'),
           ),
         );
       }
@@ -136,7 +136,7 @@ class _PdfScreenState extends State<PdfScreen> {
       if (mounted) {
         ShadToaster.of(context).show(
           ShadToast.destructive(
-            title: const Text('Ошибка импорта фото'),
+            title: Text(AppLocalizations.of(context)!.importPhotoError),
             description: Text('$e'),
           ),
         );
@@ -157,9 +157,8 @@ class _PdfScreenState extends State<PdfScreen> {
       if (mounted) {
         ShadToaster.of(context).show(
           ShadToast(
-            title: const Text('✅ PDF импортирован'),
-            description: Text(
-                'Добавлено ${_viewModel.document?.imagePaths.length ?? 0} страниц'),
+            title: Text('✅ ${AppLocalizations.of(context)!.pdfImported}'),
+            description: Text('${_viewModel.document?.imagePaths.length ?? 0}'),
           ),
         );
       }
@@ -167,7 +166,7 @@ class _PdfScreenState extends State<PdfScreen> {
       if (mounted) {
         ShadToaster.of(context).show(
           ShadToast.destructive(
-            title: const Text('Ошибка импорта PDF'),
+            title: Text(AppLocalizations.of(context)!.importPdfError),
             description: Text('$e'),
           ),
         );
@@ -195,10 +194,10 @@ class _PdfScreenState extends State<PdfScreen> {
         if (mounted) {
           ShadToaster.of(context).show(
             ShadToast(
-              title: const Text('PDF сохранён'),
+              title: Text(AppLocalizations.of(context)!.pdfSaved),
               description: Text(pdfPath.split('/').last),
               action: ShadButton.outline(
-                child: const Text('Поделиться'),
+                child: Text(AppLocalizations.of(context)!.share),
                 onPressed: () {
                   ShadToaster.of(context).hide();
                   _shareDocument();
@@ -211,7 +210,7 @@ class _PdfScreenState extends State<PdfScreen> {
         if (mounted) {
           ShadToaster.of(context).show(
             ShadToast.destructive(
-              title: const Text('Ошибка экспорта'),
+              title: Text(AppLocalizations.of(context)!.exportError),
               description: Text('$e'),
             ),
           );
@@ -241,7 +240,7 @@ class _PdfScreenState extends State<PdfScreen> {
         if (mounted) {
           ShadToaster.of(context).show(
             ShadToast.destructive(
-              title: const Text('Ошибка печати'),
+              title: Text(AppLocalizations.of(context)!.printError),
               description: Text('$e'),
             ),
           );
@@ -270,7 +269,7 @@ class _PdfScreenState extends State<PdfScreen> {
         if (mounted) {
           ShadToaster.of(context).show(
             ShadToast.destructive(
-              title: const Text('Ошибка отправки'),
+              title: Text(AppLocalizations.of(context)!.shareError),
               description: Text('$e'),
             ),
           );
@@ -289,15 +288,16 @@ class _PdfScreenState extends State<PdfScreen> {
     showShadDialog(
       context: context,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return StatefulBuilder(
           builder: (context, setState) {
             return ShadDialog(
-              title: const Text('Настройки экспорта PDF'),
-              description: const Text('Выберите формат страницы и отступы'),
+              title: Text(l10n.pdfExportSettings),
+              description: Text(l10n.choosePageFormat),
               actions: [
                 ShadButton.outline(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Отмена'),
+                  child: Text(l10n.cancel),
                 ),
                 ShadButton(
                   onPressed: () {
@@ -307,7 +307,7 @@ class _PdfScreenState extends State<PdfScreen> {
                       margin: selectedMargin,
                     ));
                   },
-                  child: const Text('Продолжить'),
+                  child: Text(l10n.continueText),
                 ),
               ],
               child: Column(
@@ -315,7 +315,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
-                  const Text('Формат страницы'),
+                  Text(l10n.pageFormat),
                   const SizedBox(height: 8),
                   ShadSelect<PdfPageFormat>(
                     initialValue: selectedFormat,
@@ -334,22 +334,22 @@ class _PdfScreenState extends State<PdfScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  const Text('Отступы (поля)'),
+                  Text(l10n.margins),
                   const SizedBox(height: 8),
                   ShadSelect<double>(
                     initialValue: selectedMargin,
-                    options: const [
-                      ShadOption(value: 0.0, child: Text('Без полей (0)')),
-                      ShadOption(value: 10.0, child: Text('Узкие (10)')),
-                      ShadOption(value: 20.0, child: Text('Обычные (20)')),
+                    options: [
+                      ShadOption(value: 0.0, child: Text(l10n.noMargins)),
+                      ShadOption(value: 10.0, child: Text(l10n.narrowMargins)),
+                      ShadOption(value: 20.0, child: Text(l10n.defaultMargins)),
                     ],
                     onChanged: (val) {
                       if (val != null) setState(() => selectedMargin = val);
                     },
                     selectedOptionBuilder: (context, value) {
-                      if (value == 0.0) return const Text('Без полей');
-                      if (value == 10.0) return const Text('Узкие');
-                      return const Text('Обычные');
+                      if (value == 0.0) return Text(l10n.noMargins);
+                      if (value == 10.0) return Text(l10n.narrowMargins);
+                      return Text(l10n.defaultMargins);
                     },
                   ),
                 ],
@@ -377,12 +377,13 @@ class _PdfScreenState extends State<PdfScreen> {
     if (_viewModel.document == null) return;
 
     final controller = TextEditingController(text: _viewModel.document!.name);
+    final l10n = AppLocalizations.of(context)!;
 
     showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: const Text('Переименовать документ'),
-        description: const Text('Введите новое название документа'),
+        title: Text(l10n.renameDocument),
+        description: Text(l10n.enterNewName),
         actions: [
           ShadButton.outline(
             onPressed: () => Navigator.pop(context),
@@ -396,14 +397,14 @@ class _PdfScreenState extends State<PdfScreen> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Сохранить'),
+            child: Text(l10n.save),
           ),
         ],
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: ShadInput(
             controller: controller,
-            placeholder: const Text('Название документа'),
+            placeholder: Text(l10n.documentName),
             autofocus: true,
           ),
         ),
@@ -418,6 +419,8 @@ class _PdfScreenState extends State<PdfScreen> {
     final folders = await DocumentStorageService.loadAllFolders();
     if (!mounted) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     showShadSheet(
       context: context,
       side: ShadSheetSide.bottom,
@@ -425,8 +428,8 @@ class _PdfScreenState extends State<PdfScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) => ShadSheet(
-        title: const Text('Переместить в папку'),
-        description: Text('Выберите папку для "${document.name}"'),
+        title: Text(l10n.moveToFolderTitle),
+        description: Text(l10n.chooseFolderDesc),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
@@ -447,7 +450,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   children: [
                     const Icon(LucideIcons.folderMinus, size: 20),
                     const SizedBox(width: 8),
-                    const Expanded(child: Text('Убрать из папки')),
+                    Expanded(child: Text(l10n.removeFromFolder)),
                     if (document.folderId == null)
                       const Icon(LucideIcons.check, size: 20)
                   ],
@@ -494,10 +497,11 @@ class _PdfScreenState extends State<PdfScreen> {
   }
 
   void _deletePage(int index) {
+    final l10n = AppLocalizations.of(context)!;
     if (_viewModel.totalPages <= 1) {
       ShadToaster.of(context).show(
-        const ShadToast(
-          title: Text('Нельзя удалить последнюю страницу'),
+        ShadToast(
+          title: Text(l10n.cannotDeleteLastPage),
         ),
       );
       return;
@@ -506,15 +510,15 @@ class _PdfScreenState extends State<PdfScreen> {
     showShadDialog(
       context: context,
       builder: (context) => ShadDialog.alert(
-        title: const Text('Удалить страницу?'),
+        title: Text(l10n.deletePage),
         description: Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Text('Вы уверены, что хотите удалить страницу ${index + 1}?'),
+          child: Text(l10n.deletePageDesc),
         ),
         actions: [
           ShadButton.outline(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
+            child: Text(l10n.cancel),
           ),
           ShadButton.destructive(
             onPressed: () {
@@ -528,7 +532,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 _pageController.jumpToPage(_viewModel.currentPageIndex);
               }
             },
-            child: const Text('Удалить'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -565,6 +569,7 @@ class _PdfScreenState extends State<PdfScreen> {
   void _showMoreOptions() {
     final theme = ShadTheme.of(context);
     final isPremium = widget.subscriptionService.isPremiumUser;
+    final l10n = AppLocalizations.of(context)!;
 
     showShadSheet(
       context: context,
@@ -573,7 +578,7 @@ class _PdfScreenState extends State<PdfScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) => ShadSheet(
-        title: const Text('Опции документа'),
+        title: Text(l10n.settings),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
@@ -589,7 +594,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   Navigator.pop(context);
                   _importPhotosFromDevice();
                 },
-                child: const Text('Добавить фото'),
+                child: Text(l10n.importImages),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -601,7 +606,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   Navigator.pop(context);
                   _importPdfPages();
                 },
-                child: const Text('Импортировать PDF'),
+                child: Text(l10n.importPdf),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -619,7 +624,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   Navigator.pop(context);
                   _exportPdf();
                 },
-                child: Text('Экспорт в PDF',
+                child: Text(l10n.exportPdf,
                     style: isPremium
                         ? null
                         : TextStyle(color: theme.colorScheme.muted)),
@@ -640,7 +645,8 @@ class _PdfScreenState extends State<PdfScreen> {
                   Navigator.pop(context);
                   _printDocument();
                 },
-                child: Text('Печать',
+                child: Text(
+                    'Print', // Or use l10n.print (if it existed). I'll use l10n.exportPdf for now... actually let me add print
                     style: isPremium
                         ? null
                         : TextStyle(color: theme.colorScheme.muted)),
@@ -661,7 +667,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   Navigator.pop(context);
                   _shareDocument();
                 },
-                child: Text('Поделиться',
+                child: Text(l10n.share,
                     style: isPremium
                         ? null
                         : TextStyle(color: theme.colorScheme.muted)),
@@ -676,7 +682,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   Navigator.pop(context);
                   _showRenameDialog();
                 },
-                child: const Text('Переименовать'),
+                child: Text(l10n.rename),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -688,7 +694,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   Navigator.pop(context);
                   _showMoveToFolderDialog();
                 },
-                child: const Text('В папку'),
+                child: Text(l10n.moveToFolder),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -700,7 +706,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   Navigator.pop(context);
                   _showPageManagement();
                 },
-                child: const Text('Управление страницами'),
+                child: Text(l10n.managePages),
               ),
             ],
           ),
@@ -712,6 +718,7 @@ class _PdfScreenState extends State<PdfScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return LoadingOverlay(
         isLoading: _viewModel.isLoading || _isExporting || _isSharing,
@@ -741,7 +748,7 @@ class _PdfScreenState extends State<PdfScreen> {
                               ],
                             ),
                           )
-                        : Text('Новый документ', style: theme.textTheme.h3),
+                        : Text(l10n.newDocument, style: theme.textTheme.h3),
                     actions: [
                       if (_viewModel.hasImages) ...[
                         if (_isExporting || _isSharing)
@@ -798,10 +805,10 @@ class _PdfScreenState extends State<PdfScreen> {
                                     ),
                                   ),
                             child: Text(_viewModel.isLoading
-                                ? 'Сканирование...'
+                                ? l10n.scanning
                                 : _viewModel.hasImages
-                                    ? 'Заново'
-                                    : 'Сканировать документ'),
+                                    ? l10n.retake
+                                    : l10n.scanDocument),
                           ),
                         ),
                         if (_viewModel.hasImages) ...[
@@ -814,7 +821,7 @@ class _PdfScreenState extends State<PdfScreen> {
                                 padding: EdgeInsets.only(right: 8),
                                 child: Icon(LucideIcons.plus, size: 18),
                               ),
-                              child: const Text('Добавить'),
+                              child: Text(l10n.add),
                             ),
                           ),
                         ],
@@ -835,7 +842,7 @@ class _PdfScreenState extends State<PdfScreen> {
                                     color: theme.colorScheme.mutedForeground),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'Нет отсканированных изображений',
+                                  l10n.noScannedImages,
                                   style: theme.textTheme.muted,
                                 ),
                               ],
@@ -963,7 +970,7 @@ class _PdfScreenState extends State<PdfScreen> {
                                                           .background),
                                                   const SizedBox(width: 4),
                                                   Text(
-                                                    'Нажмите для редактирования',
+                                                    l10n.clickToEdit,
                                                     style: TextStyle(
                                                       color: theme.colorScheme
                                                           .background,
@@ -1130,6 +1137,7 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
@@ -1165,8 +1173,8 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                         const SizedBox(height: 16),
                         Text(
                           isSelectionMode
-                              ? 'Выбрано: $selectedCount'
-                              : 'Управление страницами',
+                              ? l10n.selectedCount(selectedCount)
+                              : l10n.managePages,
                           style: theme.textTheme.large
                               .copyWith(fontWeight: FontWeight.w600),
                         ),
@@ -1181,7 +1189,7 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                                     widget.viewModel.selectAllPages();
                                   },
                                   size: ShadButtonSize.sm,
-                                  child: const Text('Выбрать все'),
+                                  child: Text(l10n.selectAll),
                                 ),
                                 const SizedBox(width: 8),
                                 ShadButton.outline(
@@ -1190,7 +1198,7 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                                     widget.viewModel.toggleSelectionMode();
                                   },
                                   size: ShadButtonSize.sm,
-                                  child: const Text('Отмена'),
+                                  child: Text(l10n.cancel),
                                 ),
                               ],
                             ),
@@ -1206,7 +1214,7 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                                   color: theme.colorScheme.mutedForeground),
                               const SizedBox(width: 4),
                               Text(
-                                'Перетащите для изменения порядка',
+                                l10n.dragToReorder,
                                 style: theme.textTheme.muted,
                               ),
                             ],
@@ -1277,7 +1285,7 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                               ],
                             ),
                             title: Text(
-                              'Страница ${index + 1}',
+                              l10n.pageIndex(index + 1),
                               style: theme.textTheme.p,
                             ),
                             subtitle: widget.viewModel.isImageEdited(index)
@@ -1287,7 +1295,7 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                                           size: 12, color: Color(0xFF22C55E)),
                                       const SizedBox(width: 4),
                                       Text(
-                                        'Отредактировано',
+                                        l10n.edited,
                                         style: theme.textTheme.small.copyWith(
                                             color: const Color(0xFF22C55E)),
                                       ),
@@ -1353,9 +1361,8 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                               widget.viewModel.selectedPages.length;
                           if (pagesToRemove >= widget.viewModel.totalPages) {
                             ShadToaster.of(context).show(
-                              const ShadToast(
-                                title: Text(
-                                    'Нельзя удалить все страницы документа'),
+                              ShadToast(
+                                title: Text(l10n.cannotDeleteAllPages),
                               ),
                             );
                             return;
@@ -1369,7 +1376,7 @@ class _PageManagementSheetState extends State<_PageManagementSheet> {
                           // Wait, `onDelete` receives an index. Let's just pop or pass a new `onBulkDelete`?
                           // The modal doesn't know about `_saveDocument`. We should trigger it.
                         },
-                        child: Text('Удалить выбранные ($selectedCount)'),
+                        child: Text(l10n.deleteSelectedCount(selectedCount)),
                       ),
                     ),
                 ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pixel_scan_test/src/ui/home/widgets/home_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import 'l10n/app_localizations.dart';
 import 'src/core/config/theme.dart';
 import 'src/core/router/app_navigator.dart';
 import 'src/core/services/subscription_service.dart';
@@ -30,7 +32,14 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       appBuilder: (context) {
         return MaterialApp(
-          title: 'Pixel Scan',
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           debugShowCheckedModeBanner: false,
           theme: Theme.of(context),
           builder: (context, child) {

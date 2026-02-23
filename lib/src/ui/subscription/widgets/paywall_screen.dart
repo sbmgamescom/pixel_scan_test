@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixel_scan_test/l10n/app_localizations.dart';
 
 import '../../../components/loading_overlay.dart';
 import '../../../core/services/subscription_service.dart';
@@ -7,8 +8,8 @@ class PaywallScreen extends StatefulWidget {
   final VoidCallback? onPurchaseSuccess;
   final VoidCallback? onSkip;
   final bool showSkipButton;
-  final String title;
-  final String subtitle;
+  final String? title;
+  final String? subtitle;
   final SubscriptionService subscriptionService;
 
   const PaywallScreen({
@@ -16,8 +17,8 @@ class PaywallScreen extends StatefulWidget {
     this.onPurchaseSuccess,
     this.onSkip,
     this.showSkipButton = false,
-    this.title = 'Перейти на Премиум',
-    this.subtitle = 'Разблокируйте все возможности приложения',
+    this.title,
+    this.subtitle,
     required String source,
     required this.subscriptionService,
   });
@@ -47,8 +48,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
       });
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка загрузки подписок: $e')),
+          SnackBar(content: Text(l10n.subscriptionLoadError(e.toString()))),
         );
       }
     }
@@ -92,9 +94,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
           if (!widget.showSkipButton)
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Закрыть',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.close,
+                style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 16,
                 ),
@@ -144,7 +146,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
         const SizedBox(height: 24),
         Text(
-          widget.title,
+          widget.title ?? AppLocalizations.of(context)!.paywallTitle,
           style: const TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -154,7 +156,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
         const SizedBox(height: 12),
         Text(
-          widget.subtitle,
+          widget.subtitle ?? AppLocalizations.of(context)!.paywallSubtitle,
           style: const TextStyle(
             fontSize: 16,
             color: Colors.white70,
@@ -166,13 +168,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _buildFeatures() {
+    final l10n = AppLocalizations.of(context)!;
     final features = [
-      {'icon': Icons.scanner, 'title': 'Неограниченное сканирование'},
-      {'icon': Icons.edit, 'title': 'Продвинутое редактирование'},
-      {'icon': Icons.print, 'title': 'Экспорт и печать документов'},
-      {'icon': Icons.share, 'title': 'Безлимитное сохранение'},
-      {'icon': Icons.cloud_sync, 'title': 'Синхронизация в облаке'},
-      {'icon': Icons.support, 'title': 'Приоритетная поддержка'},
+      {'icon': Icons.scanner, 'title': l10n.unlimitedScans},
+      {'icon': Icons.edit, 'title': l10n.advancedEditing},
+      {'icon': Icons.print, 'title': l10n.exportAndPrint},
+      {'icon': Icons.share, 'title': l10n.unlimitedStorage},
+      {'icon': Icons.cloud_sync, 'title': l10n.cloudSync},
+      {'icon': Icons.support, 'title': l10n.prioritySupport},
     ];
 
     return Column(
@@ -220,9 +223,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
     }
 
     if (_availableProducts.isEmpty) {
-      return const Text(
-        'Подписки временно недоступны',
-        style: TextStyle(
+      return Text(
+        AppLocalizations.of(context)!.subscriptionsUnavailable,
+        style: const TextStyle(
           color: Colors.white70,
           fontSize: 16,
         ),
@@ -293,7 +296,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           const SizedBox(height: 4),
                         if (product.trialPeriod != null)
                           Text(
-                            'Бесплатный пробный период',
+                            AppLocalizations.of(context)!.freeTrial,
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.green[400],
@@ -321,28 +324,30 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   String _getProductTitle(String period) {
+    final l10n = AppLocalizations.of(context)!;
     switch (period.toLowerCase()) {
       case 'week':
-        return 'Недельная подписка';
+        return l10n.weeklySubscription;
       case 'month':
-        return 'Месячная подписка';
+        return l10n.monthlySubscription;
       case 'year':
-        return 'Годовая подписка';
+        return l10n.annualSubscription;
       default:
-        return 'Подписка';
+        return l10n.defaultSubscription;
     }
   }
 
   String _getProductDescription(String period) {
+    final l10n = AppLocalizations.of(context)!;
     switch (period.toLowerCase()) {
       case 'week':
-        return 'Оплата каждую неделю';
+        return l10n.weeklyPayment;
       case 'month':
-        return 'Оплата каждый месяц';
+        return l10n.monthlyPayment;
       case 'year':
-        return 'Оплата один раз в год';
+        return l10n.annualPayment;
       default:
-        return 'Премиум доступ';
+        return l10n.premiumAccess;
     }
   }
 
@@ -407,9 +412,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text(
-                      'Подписаться',
-                      style: TextStyle(
+                  : Text(
+                      AppLocalizations.of(context)!.subscribe,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -422,9 +427,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
             children: [
               TextButton(
                 onPressed: _handleRestore,
-                child: const Text(
-                  'Восстановить',
-                  style: TextStyle(
+                child: Text(
+                  AppLocalizations.of(context)!.restorePurchases,
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 16,
                   ),
@@ -440,9 +445,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 onPressed: () {
                   // TODO: Показать пользовательское соглашение
                 },
-                child: const Text(
-                  'Условия',
-                  style: TextStyle(
+                child: Text(
+                  AppLocalizations.of(context)!.termsOfService,
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 16,
                   ),
@@ -471,13 +476,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
         Navigator.of(context).pop();
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Покупка не удалась')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.purchaseFailed)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка: $e')),
+          SnackBar(
+              content: Text(
+                  AppLocalizations.of(context)!.errorWithDetail(e.toString()))),
         );
       }
     } finally {
@@ -502,13 +509,17 @@ class _PaywallScreenState extends State<PaywallScreen> {
         Navigator.of(context).pop();
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Активные подписки не найдены')),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context)!.noActiveSubscriptions)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка: $e')),
+          SnackBar(
+              content: Text(
+                  AppLocalizations.of(context)!.errorWithDetail(e.toString()))),
         );
       }
     } finally {

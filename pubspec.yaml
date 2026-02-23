@@ -51,6 +51,7 @@ flutter_native_splash:
 
 
 flutter:
+  generate: true
   uses-material-design: true
 
   assets:

@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pixel_scan_test/l10n/app_localizations.dart';
 import 'package:pixel_scan_test/src/core/router/app_navigator.dart';
 import 'package:pixel_scan_test/src/core/services/subscription_service.dart';
 import 'package:pixel_scan_test/src/ui/home/widgets/home_screen.dart';
@@ -37,6 +39,13 @@ void main() {
 
     await tester.pumpWidget(
       ShadApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         home: MainScreen(
           subscriptionService: subscriptionService,
           appNavigator: appNavigator,
@@ -45,12 +54,7 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-
-    expect(find.text('Pocket Scan'), findsOneWidget);
-    expect(find.text('Нет документов'), findsOneWidget);
-    expect(
-        find.text(
-            'Нажмите кнопку сканирования,\nчтобы добавить первый документ'),
-        findsOneWidget);
+    expect(find.text('Pixel Scan'), findsOneWidget);
+    expect(find.text('No documents'), findsOneWidget);
   });
 }

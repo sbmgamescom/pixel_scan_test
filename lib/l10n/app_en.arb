@@ -1,0 +1,166 @@
+{
+  "appTitle": "Pixel Scan",
+  "homeTitle": "My Documents",
+  "searchHint": "Search...",
+  "searchDocumentsHint": "Search documents...",
+  "allDocuments": "All documents",
+  "allDocumentsNoFolder": "All documents (No folder)",
+  "emptyDocuments": "No documents yet. Tap '+' to scan.",
+  "noDocumentsTitle": "No documents",
+  "noDocumentsDesc": "Tap the scan button\nto add your first document",
+  "searchNoResultsTitle": "Nothing found",
+  "searchNoResultsDesc": "Try changing your search query",
+  "scanButton": "Scan",
+  "importGallery": "Import from Gallery",
+  "settings": "Settings",
+  "upgradeToPremium": "Upgrade to Premium",
+  "premiumActive": "Premium Active",
+  "restorePurchases": "Restore Purchases",
+  "contactSupport": "Contact Support",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "delete": "Delete",
+  "share": "Share",
+  "exportPdf": "Export PDF",
+  "untitledDocument": "Untitled Document",
+  "cancel": "Cancel",
+  "save": "Save",
+  "done": "Done",
+  "premiumRequired": "Premium Feature",
+  "premiumRequiredDesc": "This feature requires a premium subscription.",
+  "unlimitedScans": "Unlimited Scans & Exports",
+  "noAds": "No Ads",
+  "highQualityExport": "High Quality PDF Export",
+  "subscribe": "Subscribe Now",
+  "paywallTitle": "Unlock Premium",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "weekly": "Weekly",
+  "lifetime": "Lifetime",
+  
+  "open": "Open",
+  "rename": "Rename",
+  "moveToFolder": "Move to Folder",
+  "addDocument": "Add Document",
+  "addDocumentDesc": "Choose how to add a document",
+  "scanWithCamera": "Scan with camera",
+  "importPdf": "Import PDF",
+  "importImages": "Import Images",
+  "renameDocument": "Rename Document",
+  "enterNewName": "Enter new document name",
+  "documentName": "Document Name",
+  "newFolder": "New Folder",
+  "enterFolderName": "Enter name for new folder",
+  "folderName": "Folder Name",
+  "create": "Create",
+  "moveToFolderTitle": "Move to Folder",
+  "chooseFolderDesc": "Choose a folder for this document",
+  "deleteDocument": "Delete Document",
+  "deleteDocumentDesc": "Are you sure you want to delete this document?",
+  "deleteFolder": "Delete Folder?",
+  "deleteFolderDesc": "The folder will be deleted, but the documents inside will remain and be moved to the home screen.",
+  "noFolder": "Without folder (Home)",
+  "selectedCount": "Selected: {count}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "All",
+  "premium": "Premium",
+  "managePages": "Manage Pages",
+  "newDocument": "New Document",
+  "scanning": "Scanning...",
+  "retake": "Retake",
+  "scanDocument": "Scan Document",
+  "add": "Add",
+  "noScannedImages": "No scanned images",
+  "dragToReorder": "Drag to reorder",
+  "pageIndex": "Page {index}",
+  "@pageIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "edited": "Edited",
+  "clickToEdit": "Tap to edit",
+  "cannotDeleteAllPages": "Cannot delete all pages",
+  "deleteSelectedCount": "Delete selected ({count})",
+  "@deleteSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "scanError": "Scan Error",
+  "addPagesError": "Error adding pages",
+  "saveError": "Save Error",
+  "photosAdded": "Photos Added",
+  "importPhotoError": "Error importing photo",
+  "importPdfError": "Error importing PDF",
+  "pdfImported": "PDF Imported",
+  "pdfSaved": "PDF Saved",
+  "exportError": "Export Error",
+  "printError": "Print Error",
+  "shareError": "Share Error",
+  "pdfExportSettings": "PDF Export Settings",
+  "choosePageFormat": "Choose page format and margins",
+  "continueText": "Continue",
+  "pageFormat": "Page Format",
+  "margins": "Margins",
+  "noMargins": "No margins (0)",
+  "narrowMargins": "Narrow (10)",
+  "defaultMargins": "Default (20)",
+  "cannotDeleteLastPage": "Cannot delete the last page",
+  "deletePage": "Delete page?",
+  "deletePageDesc": "Are you sure you want to delete this page?",
+  "removeFromFolder": "Remove from folder",
+  "pagesCount": "{count} pages",
+  "@pagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallSubtitle": "Unlock all app features",
+  "subscriptionLoadError": "Error loading subscriptions: {error}",
+  "@subscriptionLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "close": "Close",
+  "advancedEditing": "Advanced Editing",
+  "exportAndPrint": "Export and print documents",
+  "unlimitedStorage": "Unlimited Storage",
+  "cloudSync": "Cloud Sync",
+  "prioritySupport": "Priority Support",
+  "subscriptionsUnavailable": "Subscriptions are temporarily unavailable",
+  "freeTrial": "Free Trial",
+  "weeklySubscription": "Weekly Subscription",
+  "monthlySubscription": "Monthly Subscription",
+  "annualSubscription": "Annual Subscription",
+  "defaultSubscription": "Subscription",
+  "weeklyPayment": "Pay every week",
+  "monthlyPayment": "Pay every month",
+  "annualPayment": "Pay once a year",
+  "premiumAccess": "Premium access",
+  "purchaseFailed": "Purchase failed",
+  "errorWithDetail": "Error: {error}",
+  "@errorWithDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noActiveSubscriptions": "No active subscriptions found"
+}

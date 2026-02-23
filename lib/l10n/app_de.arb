@@ -1,0 +1,166 @@
+{
+  "appTitle": "Pixel Scan",
+  "homeTitle": "Meine Dokumente",
+  "searchHint": "Suche...",
+  "searchDocumentsHint": "Dokumente suchen...",
+  "allDocuments": "Alle Dokumente",
+  "allDocumentsNoFolder": "Alle Dokumente (Kein Ordner)",
+  "emptyDocuments": "Noch keine Dokumente. Tippe auf '+'.",
+  "noDocumentsTitle": "Keine Dokumente",
+  "noDocumentsDesc": "Tippe auf den Scan-Button\num dein erstes Dokument hinzuzufügen",
+  "searchNoResultsTitle": "Nichts gefunden",
+  "searchNoResultsDesc": "Versuche deine Suchanfrage zu ändern",
+  "scanButton": "Scannen",
+  "importGallery": "Aus Galerie importieren",
+  "settings": "Einstellungen",
+  "upgradeToPremium": "Auf Premium upgraden",
+  "premiumActive": "Premium Aktiv",
+  "restorePurchases": "Käufe wiederherstellen",
+  "contactSupport": "Support kontaktieren",
+  "privacyPolicy": "Datenschutzrichtlinie",
+  "termsOfService": "Nutzungsbedingungen",
+  "delete": "Löschen",
+  "share": "Teilen",
+  "exportPdf": "Als PDF exportieren",
+  "untitledDocument": "Unbenanntes Dokument",
+  "cancel": "Abbrechen",
+  "save": "Speichern",
+  "done": "Fertig",
+  "premiumRequired": "Premium-Funktion",
+  "premiumRequiredDesc": "Diese Funktion erfordert ein Premium-Abo.",
+  "unlimitedScans": "Unbegrenzte Scans und Exporte",
+  "noAds": "Keine Werbung",
+  "highQualityExport": "Hochqualitativer PDF-Export",
+  "subscribe": "Jetzt abonnieren",
+  "paywallTitle": "Premium freischalten",
+  "monthly": "Monatlich",
+  "yearly": "Jährlich",
+  "weekly": "Wöchentlich",
+  "lifetime": "Lebenslang",
+  
+  "open": "Öffnen",
+  "rename": "Umbenennen",
+  "moveToFolder": "In Ordner verschieben",
+  "addDocument": "Dokument hinzufügen",
+  "addDocumentDesc": "Wähle wie das Dokument hinzugefügt werden soll",
+  "scanWithCamera": "Mit Kamera scannen",
+  "importPdf": "PDF importieren",
+  "importImages": "Bilder importieren",
+  "renameDocument": "Dokument umbenennen",
+  "enterNewName": "Neuen Namen eingeben",
+  "documentName": "Dokumentname",
+  "newFolder": "Neuer Ordner",
+  "enterFolderName": "Namen für neuen Ordner eingeben",
+  "folderName": "Ordnername",
+  "create": "Erstellen",
+  "moveToFolderTitle": "In Ordner verschieben",
+  "chooseFolderDesc": "Wähle einen Ordner für dieses Dokument",
+  "deleteDocument": "Dokument löschen",
+  "deleteDocumentDesc": "Möchtest du dieses Dokument wirklich löschen?",
+  "deleteFolder": "Ordner löschen?",
+  "deleteFolderDesc": "Der Ordner wird gelöscht, die Dokumente darin bleiben jedoch erhalten und werden auf den Startbildschirm verschoben.",
+  "noFolder": "Ohne Ordner (Startseite)",
+  "selectedCount": "Ausgewählt: {count}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "Alle",
+  "premium": "Premium",
+  "managePages": "Seiten verwalten",
+  "newDocument": "Neues Dokument",
+  "scanning": "Scannen...",
+  "retake": "Wiederholen",
+  "scanDocument": "Dokument scannen",
+  "add": "Hinzufügen",
+  "noScannedImages": "Keine gescannten Bilder",
+  "dragToReorder": "Zum Neuordnen ziehen",
+  "pageIndex": "Seite {index}",
+  "@pageIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "edited": "Bearbeitet",
+  "clickToEdit": "Zum Bearbeiten tippen",
+  "cannotDeleteAllPages": "Kann nicht alle Seiten löschen",
+  "deleteSelectedCount": "Ausgewählte löschen ({count})",
+  "@deleteSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "scanError": "Scan-Fehler",
+  "addPagesError": "Fehler beim Hinzufügen",
+  "saveError": "Speicherfehler",
+  "photosAdded": "Fotos hinzugefügt",
+  "importPhotoError": "Fehler beim Importieren",
+  "importPdfError": "Fehler beim Importieren",
+  "pdfImported": "PDF importiert",
+  "pdfSaved": "PDF gespeichert",
+  "exportError": "Exportfehler",
+  "printError": "Druckfehler",
+  "shareError": "Teilungsfehler",
+  "pdfExportSettings": "PDF-Exporteinstellungen",
+  "choosePageFormat": "Format und Ränder wählen",
+  "continueText": "Weiter",
+  "pageFormat": "Seitenformat",
+  "margins": "Ränder",
+  "noMargins": "Keine Ränder (0)",
+  "narrowMargins": "Schmal (10)",
+  "defaultMargins": "Standard (20)",
+  "cannotDeleteLastPage": "Kann nicht die letzte Seite löschen",
+  "deletePage": "Seite löschen?",
+  "deletePageDesc": "Möchtest du diese Seite wirklich löschen?",
+  "removeFromFolder": "Aus Ordner entfernen",
+  "pagesCount": "{count} Seiten",
+  "@pagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallSubtitle": "Alle Funktionen freischalten",
+  "subscriptionLoadError": "Ladefehler: {error}",
+  "@subscriptionLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "close": "Schließen",
+  "advancedEditing": "Erweiterte Bearbeitung",
+  "exportAndPrint": "Dokumente exportieren und drucken",
+  "unlimitedStorage": "Unbegrenzter Speicher",
+  "cloudSync": "Cloud-Synchronistation",
+  "prioritySupport": "Prioritäts-Support",
+  "subscriptionsUnavailable": "Abonnements vorübergehend nicht verfügbar",
+  "freeTrial": "Kostenlose Testversion",
+  "weeklySubscription": "Wöchentliches Abo",
+  "monthlySubscription": "Monatliches Abo",
+  "annualSubscription": "Jährliches Abo",
+  "defaultSubscription": "Abonnement",
+  "weeklyPayment": "Jede Woche bezahlen",
+  "monthlyPayment": "Jeden Monat bezahlen",
+  "annualPayment": "Einmal jährlich bezahlen",
+  "premiumAccess": "Premium-Zugang",
+  "purchaseFailed": "Kauf fehlgeschlagen",
+  "errorWithDetail": "Fehler: {error}",
+  "@errorWithDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noActiveSubscriptions": "Keine aktiven Abonnements gefunden"
+}

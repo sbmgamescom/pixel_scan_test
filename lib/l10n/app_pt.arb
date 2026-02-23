@@ -1,0 +1,166 @@
+{
+  "appTitle": "Pixel Scan",
+  "homeTitle": "Meus Documentos",
+  "searchHint": "Buscar...",
+  "searchDocumentsHint": "Buscar documentos...",
+  "allDocuments": "Todos os documentos",
+  "allDocumentsNoFolder": "Todos os documentos (Sem pasta)",
+  "emptyDocuments": "Nenhum documento ainda. Toque em '+' para escanear.",
+  "noDocumentsTitle": "Nenhum documento",
+  "noDocumentsDesc": "Toque no botão de escanear\npara adicionar seu primeiro documento",
+  "searchNoResultsTitle": "Nada encontrado",
+  "searchNoResultsDesc": "Tente alterar sua consulta de pesquisa",
+  "scanButton": "Escanear",
+  "importGallery": "Importar da Galeria",
+  "settings": "Configurações",
+  "upgradeToPremium": "Atualizar para Premium",
+  "premiumActive": "Premium Ativo",
+  "restorePurchases": "Restaurar Compras",
+  "contactSupport": "Contatar Suporte",
+  "privacyPolicy": "Política de Privacidade",
+  "termsOfService": "Termos de Serviço",
+  "delete": "Excluir",
+  "share": "Compartilhar",
+  "exportPdf": "Exportar PDF",
+  "untitledDocument": "Documento sem Título",
+  "cancel": "Cancelar",
+  "save": "Salvar",
+  "done": "Concluído",
+  "premiumRequired": "Recurso Premium",
+  "premiumRequiredDesc": "Este recurso requer uma assinatura premium.",
+  "unlimitedScans": "Escaneamentos e Exportações Ilimitados",
+  "noAds": "Sem Anúncios",
+  "highQualityExport": "Exportação de PDF em Alta Qualidade",
+  "subscribe": "Assine Agora",
+  "paywallTitle": "Desbloquear Premium",
+  "monthly": "Mensal",
+  "yearly": "Anual",
+  "weekly": "Semanal",
+  "lifetime": "Vitalício",
+  
+  "open": "Abrir",
+  "rename": "Renomear",
+  "moveToFolder": "Mover para Pasta",
+  "addDocument": "Adicionar Documento",
+  "addDocumentDesc": "Escolha como adicionar o documento",
+  "scanWithCamera": "Escanear com a câmera",
+  "importPdf": "Importar PDF",
+  "importImages": "Importar Imagens",
+  "renameDocument": "Renomear Documento",
+  "enterNewName": "Insira o novo nome",
+  "documentName": "Nome do documento",
+  "newFolder": "Nova Pasta",
+  "enterFolderName": "Insira o nome para a pasta",
+  "folderName": "Nome da pasta",
+  "create": "Criar",
+  "moveToFolderTitle": "Mover para Pasta",
+  "chooseFolderDesc": "Escolha uma pasta para este documento",
+  "deleteDocument": "Excluir Documento",
+  "deleteDocumentDesc": "Tem certeza que deseja excluir este documento?",
+  "deleteFolder": "Excluir Pasta?",
+  "deleteFolderDesc": "A pasta será excluída, mas os documentos dentro permanecerão na tela inicial.",
+  "noFolder": "Sem pasta (Início)",
+  "selectedCount": "Selecionados: {count}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "Todos",
+  "premium": "Premium",
+  "managePages": "Gerenciar Páginas",
+  "newDocument": "Novo Documento",
+  "scanning": "Escaneando...",
+  "retake": "Refazer",
+  "scanDocument": "Escanear Documento",
+  "add": "Adicionar",
+  "noScannedImages": "Nenhuma imagem escaneada",
+  "dragToReorder": "Arraste para reordenar",
+  "pageIndex": "Página {index}",
+  "@pageIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "edited": "Editado",
+  "clickToEdit": "Toque para editar",
+  "cannotDeleteAllPages": "Não é possível excluir todas as páginas",
+  "deleteSelectedCount": "Excluir selecionados ({count})",
+  "@deleteSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "scanError": "Erro de Escaneamento",
+  "addPagesError": "Erro ao adicionar páginas",
+  "saveError": "Erro ao Salvar",
+  "photosAdded": "Fotos Adicionadas",
+  "importPhotoError": "Erro ao importar foto",
+  "importPdfError": "Erro ao importar PDF",
+  "pdfImported": "PDF Importado",
+  "pdfSaved": "PDF Salvo",
+  "exportError": "Erro de Exportação",
+  "printError": "Erro de Impressão",
+  "shareError": "Erro ao Compartilhar",
+  "pdfExportSettings": "Configurações de Exportação PDF",
+  "choosePageFormat": "Escolha formato e margens",
+  "continueText": "Continuar",
+  "pageFormat": "Formato da Página",
+  "margins": "Margens",
+  "noMargins": "Sem margens (0)",
+  "narrowMargins": "Estreito (10)",
+  "defaultMargins": "Padrão (20)",
+  "cannotDeleteLastPage": "Não é possível excluir a última página",
+  "deletePage": "Excluir página?",
+  "deletePageDesc": "Tem certeza que deseja excluir esta página?",
+  "removeFromFolder": "Remover da pasta",
+  "pagesCount": "{count} páginas",
+  "@pagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallSubtitle": "Desbloqueie todas as funções",
+  "subscriptionLoadError": "Erro ao carregar assinaturas: {error}",
+  "@subscriptionLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "close": "Fechar",
+  "advancedEditing": "Edição Avançada",
+  "exportAndPrint": "Exportar e imprimir documentos",
+  "unlimitedStorage": "Armazenamento Ilimitado",
+  "cloudSync": "Sincronização na Nuvem",
+  "prioritySupport": "Suporte Prioritário",
+  "subscriptionsUnavailable": "As assinaturas estão temporariamente indisponíveis",
+  "freeTrial": "Teste Grátis",
+  "weeklySubscription": "Assinatura Semanal",
+  "monthlySubscription": "Assinatura Mensal",
+  "annualSubscription": "Assinatura Anual",
+  "defaultSubscription": "Assinatura",
+  "weeklyPayment": "Pague a cada semana",
+  "monthlyPayment": "Pague a cada mês",
+  "annualPayment": "Pague uma vez ao ano",
+  "premiumAccess": "Acesso Premium",
+  "purchaseFailed": "Falha na compra",
+  "errorWithDetail": "Erro: {error}",
+  "@errorWithDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noActiveSubscriptions": "Nenhuma assinatura ativa encontrada"
+}

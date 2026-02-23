@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixel_scan_test/l10n/app_localizations.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../../src/components/loading_overlay.dart';
@@ -60,17 +61,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
       if (success && mounted) {
         Navigator.pop(context, true);
+        final l10n = AppLocalizations.of(context)!;
         ShadToaster.of(context).show(
-          const ShadToast(
-            title: Text('🎉 Добро пожаловать в Premium!'),
-            description: Text('Теперь вам доступны все функции'),
+          ShadToast(
+            title: Text('🎉 ${l10n.premiumActive}'),
+            description: const Text(''),
           ),
         );
       } else if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ShadToaster.of(context).show(
-          const ShadToast.destructive(
-            title: Text('Ошибка'),
-            description: Text('Покупка не удалась. Попробуйте ещё раз.'),
+          ShadToast.destructive(
+            title: Text(l10n.cancel),
+            description: const Text(''),
           ),
         );
       }
@@ -102,28 +105,27 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
       if (success && mounted) {
         Navigator.pop(context, true);
+        final l10n = AppLocalizations.of(context)!;
         ShadToaster.of(context).show(
-          const ShadToast(
-            title: Text('✅ Покупки восстановлены!'),
-            description: Text('Ваша подписка активирована'),
+          ShadToast(
+            title: Text('✅ ${l10n.restorePurchases}'),
+            description: Text(l10n.premiumActive),
           ),
         );
       } else if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         showShadDialog(
           context: context,
           builder: (context) => ShadDialog.alert(
-            title: const Text('Активные подписки не найдены'),
-            description: const Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Text(
-                'Мы не смогли найти активные подписки для восстановления. '
-                'Пожалуйста, оформите новую подписку или убедитесь, что вы используете тот же Apple ID.',
-              ),
+            title: Text(l10n.restorePurchases),
+            description: Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(l10n.cancel),
             ),
             actions: [
               ShadButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Понятно'),
+                child: Text(l10n.done),
               ),
             ],
           ),
@@ -220,6 +222,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Widget _buildHeader() {
     final theme = ShadTheme.of(context);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       children: [
         // Premium icon с градиентом
@@ -238,13 +242,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
         const SizedBox(height: 24),
         Text(
-          'Unlock Premium Features',
+          l10n.paywallTitle,
           style: theme.textTheme.h2,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(
-          'Get unlimited access to all features',
+          l10n.premiumRequiredDesc,
           style: theme.textTheme.muted,
           textAlign: TextAlign.center,
         ),
@@ -254,28 +258,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Widget _buildFeatures() {
     final theme = ShadTheme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final features = [
-      (
-        icon: LucideIcons.scan,
-        title: 'Unlimited Scanning',
-        subtitle: 'Scan as many documents as you want'
-      ),
-      (
-        icon: LucideIcons.penTool,
-        title: 'Advanced Editing',
-        subtitle: 'Full editing suite with filters and effects'
-      ),
-      (
-        icon: LucideIcons.download,
-        title: 'Export Options',
-        subtitle: 'PDF, JPEG, PNG and more formats'
-      ),
-      (
-        icon: LucideIcons.cloud,
-        title: 'Cloud Sync',
-        subtitle: 'Sync across all your devices'
-      ),
+      (icon: LucideIcons.scan, title: l10n.unlimitedScans, subtitle: ''),
+      (icon: LucideIcons.download, title: l10n.highQualityExport, subtitle: ''),
+      (icon: LucideIcons.ban, title: l10n.noAds, subtitle: ''),
     ];
 
     return Column(
@@ -433,10 +421,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Widget _buildFooter() {
     final theme = ShadTheme.of(context);
-    final selectedProduct = _products.firstWhere(
-      (p) => p.productId == _selectedProductId,
-      orElse: () => _products.first,
-    );
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -463,18 +448,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       strokeWidth: 2,
                     ),
                   )
-                : Text(
-                    selectedProduct.productId == 'yearly_premium'
-                        ? 'Continue'
-                        : 'Start ${selectedProduct.period}ly subscription',
-                  ),
+                : Text(l10n.subscribe),
           ),
           const SizedBox(height: 12),
 
           // Восстановить покупки
           ShadButton.ghost(
             onPressed: _isLoading ? null : _restorePurchases,
-            child: const Text('Restore Purchases'),
+            child: Text(l10n.restorePurchases),
           ),
           const SizedBox(height: 12),
 
@@ -484,12 +465,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
             children: [
               ShadButton.link(
                 onPressed: () {},
-                child: Text('Privacy Policy', style: theme.textTheme.muted),
+                child: Text(l10n.privacyPolicy, style: theme.textTheme.muted),
               ),
               Text(' • ', style: theme.textTheme.muted),
               ShadButton.link(
                 onPressed: () {},
-                child: Text('Terms of Service', style: theme.textTheme.muted),
+                child: Text(l10n.termsOfService, style: theme.textTheme.muted),
               ),
             ],
           ),

@@ -1,0 +1,166 @@
+{
+  "appTitle": "Pixel Scan",
+  "homeTitle": "내 문서",
+  "searchHint": "검색...",
+  "searchDocumentsHint": "문서 검색...",
+  "allDocuments": "모든 문서",
+  "allDocumentsNoFolder": "모든 문서 (폴더 없음)",
+  "emptyDocuments": "문서가 없습니다. '+'를 눌러 스캔하세요.",
+  "noDocumentsTitle": "문서 없음",
+  "noDocumentsDesc": "스캔 버튼을 눌러\n첫 번째 문서를 추가하세요",
+  "searchNoResultsTitle": "찾을 수 없음",
+  "searchNoResultsDesc": "검색어를 변경해 보세요",
+  "scanButton": "스캔",
+  "importGallery": "갤러리에서 가져오기",
+  "settings": "설정",
+  "upgradeToPremium": "프리미엄으로 업그레이드",
+  "premiumActive": "프리미엄 활성",
+  "restorePurchases": "구매 복원",
+  "contactSupport": "고객 지원",
+  "privacyPolicy": "개인 정보 정책",
+  "termsOfService": "서비스 약관",
+  "delete": "삭제",
+  "share": "공유",
+  "exportPdf": "PDF로 내보내기",
+  "untitledDocument": "제목 없는 문서",
+  "cancel": "취소",
+  "save": "저장",
+  "done": "완료",
+  "premiumRequired": "프리미엄 기능",
+  "premiumRequiredDesc": "이 기능은 프리미엄 구독이 필요합니다.",
+  "unlimitedScans": "무제한 스캔 및 내보내기",
+  "noAds": "광고 없음",
+  "highQualityExport": "고품질 PDF 내보내기",
+  "subscribe": "지금 구독하기",
+  "paywallTitle": "프리미엄 잠금 해제",
+  "monthly": "월간",
+  "yearly": "연간",
+  "weekly": "주간",
+  "lifetime": "평생",
+  
+  "open": "열기",
+  "rename": "이름 바꾸기",
+  "moveToFolder": "폴더로 이동",
+  "addDocument": "문서 추가",
+  "addDocumentDesc": "문서 추가 방법 선택",
+  "scanWithCamera": "카메라로 스캔",
+  "importPdf": "PDF 가져오기",
+  "importImages": "이미지 가져오기",
+  "renameDocument": "문서 이름 바꾸기",
+  "enterNewName": "새 이름 입력",
+  "documentName": "문서 이름",
+  "newFolder": "새 폴더",
+  "enterFolderName": "폴더 이름 입력",
+  "folderName": "폴더 이름",
+  "create": "만들기",
+  "moveToFolderTitle": "폴더로 이동",
+  "chooseFolderDesc": "이 문서를 위한 폴더를 선택하세요",
+  "deleteDocument": "문서 삭제",
+  "deleteDocumentDesc": "이 문서를 삭제하시겠습니까?",
+  "deleteFolder": "폴더를 삭제하시겠습니까?",
+  "deleteFolderDesc": "폴더는 삭제되지만 내부 문서들은 홈 화면으로 이동됩니다.",
+  "noFolder": "폴더 없음(홈)",
+  "selectedCount": "선택됨: {count}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "모두",
+  "premium": "프리미엄",
+  "managePages": "페이지 관리",
+  "newDocument": "새 문서",
+  "scanning": "스캔 중...",
+  "retake": "다시 찍기",
+  "scanDocument": "문서 스캔",
+  "add": "추가",
+  "noScannedImages": "스캔된 이미지 없음",
+  "dragToReorder": "드래그하여 순서 변경",
+  "pageIndex": "{index} 페이지",
+  "@pageIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "edited": "편집됨",
+  "clickToEdit": "눌러서 편집",
+  "cannotDeleteAllPages": "모든 페이지를 삭제할 수 없습니다",
+  "deleteSelectedCount": "선택한 항목 삭제 ({count})",
+  "@deleteSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "scanError": "스캔 오류",
+  "addPagesError": "페이지 추가 오류",
+  "saveError": "저장 오류",
+  "photosAdded": "사진이 추가되었습니다",
+  "importPhotoError": "사진 가져오기 오류",
+  "importPdfError": "PDF 가져오기 오류",
+  "pdfImported": "PDF 가져옴",
+  "pdfSaved": "PDF 저장됨",
+  "exportError": "내보내기 오류",
+  "printError": "인쇄 오류",
+  "shareError": "공유 오류",
+  "pdfExportSettings": "PDF 내보내기 설정",
+  "choosePageFormat": "페이지 형식 및 여백 선택",
+  "continueText": "계속",
+  "pageFormat": "페이지 형식",
+  "margins": "여백",
+  "noMargins": "여백 없음 (0)",
+  "narrowMargins": "좁게 (10)",
+  "defaultMargins": "기본 (20)",
+  "cannotDeleteLastPage": "마지막 페이지는 삭제할 수 없습니다",
+  "deletePage": "페이지 삭제?",
+  "deletePageDesc": "이 페이지를 삭제하시겠습니까?",
+  "removeFromFolder": "폴더에서 제거",
+  "pagesCount": "{count} 페이지",
+  "@pagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallSubtitle": "모든 앱 기능 잠금 해제",
+  "subscriptionLoadError": "구독 불러오기 오류: {error}",
+  "@subscriptionLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "close": "닫기",
+  "advancedEditing": "고급 편집",
+  "exportAndPrint": "문서 내보내기 및 인쇄",
+  "unlimitedStorage": "무제한 저장 용량",
+  "cloudSync": "클라우드 동기화",
+  "prioritySupport": "우선 지원",
+  "subscriptionsUnavailable": "구독을 일시적으로 사용할 수 없습니다",
+  "freeTrial": "무료 체험",
+  "weeklySubscription": "주간 구독",
+  "monthlySubscription": "월간 구독",
+  "annualSubscription": "연간 구독",
+  "defaultSubscription": "구독",
+  "weeklyPayment": "매주 결제",
+  "monthlyPayment": "매월 결제",
+  "annualPayment": "매년 결제",
+  "premiumAccess": "프리미엄 액세스",
+  "purchaseFailed": "구매 실패",
+  "errorWithDetail": "오류: {error}",
+  "@errorWithDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noActiveSubscriptions": "활성화된 구독을 찾을 수 없습니다"
+}

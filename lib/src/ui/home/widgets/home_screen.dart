@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:pixel_scan_test/l10n/app_localizations.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../../components/loading_overlay.dart';
@@ -74,6 +75,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showImportOptions() {
+    final l10n = AppLocalizations.of(context)!;
     showShadSheet(
       context: context,
       side: ShadSheetSide.bottom,
@@ -81,8 +83,8 @@ class _MainScreenState extends State<MainScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) => ShadSheet(
-        title: const Text('Добавить документ'),
-        description: const Text('Выберите способ добавления документа'),
+        title: Text(l10n.addDocument),
+        description: Text(l10n.addDocumentDesc),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
@@ -98,7 +100,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.pop(context);
                   _scanDocument();
                 },
-                child: const Text('Сканировать камерой'),
+                child: Text(l10n.scanWithCamera),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -110,7 +112,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.pop(context);
                   _importPdf();
                 },
-                child: const Text('Импорт PDF'),
+                child: Text(l10n.importPdf),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -122,7 +124,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.pop(context);
                   _importImages();
                 },
-                child: const Text('Импорт изображений'),
+                child: Text(l10n.importImages),
               ),
             ],
           ),
@@ -150,6 +152,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showDocumentOptions(DocumentModel document) {
+    final l10n = AppLocalizations.of(context)!;
     showShadSheet(
       context: context,
       side: ShadSheetSide.bottom,
@@ -158,8 +161,8 @@ class _MainScreenState extends State<MainScreen> {
       ),
       builder: (context) => ShadSheet(
         title: Text(document.name),
-        description:
-            Text('${document.pageCount} страниц • ${document.formattedDate}'),
+        description: Text(
+            '${l10n.pagesCount(document.pageCount)} • ${document.formattedDate}'),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
@@ -175,7 +178,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.pop(context);
                   _openDocument(document);
                 },
-                child: const Text('Открыть'),
+                child: Text(l10n.open),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -187,7 +190,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.pop(context);
                   _showRenameDialog(document);
                 },
-                child: const Text('Переименовать'),
+                child: Text(l10n.rename),
               ),
               const SizedBox(height: 12),
               ShadButton.outline(
@@ -199,7 +202,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.pop(context);
                   _showMoveToFolderDialog(document);
                 },
-                child: const Text('В папку'),
+                child: Text(l10n.moveToFolder),
               ),
               const SizedBox(height: 12),
               ShadButton.destructive(
@@ -211,7 +214,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.pop(context);
                   _showDeleteConfirmation(document);
                 },
-                child: const Text('Удалить'),
+                child: Text(l10n.delete),
               ),
             ],
           ),
@@ -222,16 +225,17 @@ class _MainScreenState extends State<MainScreen> {
 
   void _showRenameDialog(DocumentModel document) {
     final controller = TextEditingController(text: document.name);
+    final l10n = AppLocalizations.of(context)!;
 
     showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: const Text('Переименовать документ'),
-        description: const Text('Введите новое название документа'),
+        title: Text(l10n.renameDocument),
+        description: Text(l10n.enterNewName),
         actions: [
           ShadButton.outline(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
+            child: Text(l10n.cancel),
           ),
           ShadButton(
             onPressed: () {
@@ -240,14 +244,14 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Сохранить'),
+            child: Text(l10n.save),
           ),
         ],
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: ShadInput(
             controller: controller,
-            placeholder: const Text('Название документа'),
+            placeholder: Text(l10n.documentName),
             autofocus: true,
           ),
         ),
@@ -257,15 +261,16 @@ class _MainScreenState extends State<MainScreen> {
 
   void _showCreateFolderDialog() {
     final controller = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
     showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: const Text('Новая папка'),
-        description: const Text('Введите название для новой папки'),
+        title: Text(l10n.newFolder),
+        description: Text(l10n.enterFolderName),
         actions: [
           ShadButton.outline(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
+            child: Text(l10n.cancel),
           ),
           ShadButton(
             onPressed: () {
@@ -274,14 +279,14 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Создать'),
+            child: Text(l10n.create),
           ),
         ],
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: ShadInput(
             controller: controller,
-            placeholder: const Text('Название папки'),
+            placeholder: Text(l10n.folderName),
             autofocus: true,
           ),
         ),
@@ -290,15 +295,16 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showMoveToFolderDialog(DocumentModel document) {
+    final l10n = AppLocalizations.of(context)!;
     showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: const Text('Переместить в папку'),
-        description: const Text('Выберите папку для этого документа'),
+        title: Text(l10n.moveToFolderTitle),
+        description: Text(l10n.chooseFolderDesc),
         actions: [
           ShadButton.outline(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
+            child: Text(l10n.cancel),
           ),
         ],
         child: Padding(
@@ -312,7 +318,7 @@ class _MainScreenState extends State<MainScreen> {
                   _viewModel.moveToFolder(document.id, null);
                   Navigator.pop(context);
                 },
-                child: const Text('Без папки (На главную)'),
+                child: Text(l10n.noFolder),
               ),
               ..._viewModel.folders.map((folder) {
                 return ShadButton.ghost(
@@ -331,23 +337,23 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showDeleteFolderConfirmation(String folderId) {
+    final l10n = AppLocalizations.of(context)!;
     showShadDialog(
       context: context,
       builder: (context) => ShadDialog.alert(
-        title: const Text('Удалить папку?'),
-        description: const Text(
-            'Сама папка будет удалена, но документы в ней останутся и переместятся на главный экран.'),
+        title: Text(l10n.deleteFolder),
+        description: Text(l10n.deleteFolderDesc),
         actions: [
           ShadButton.outline(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
+            child: Text(l10n.cancel),
           ),
           ShadButton.destructive(
             onPressed: () {
               _viewModel.deleteFolder(folderId);
               Navigator.pop(context);
             },
-            child: const Text('Удалить'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -355,27 +361,26 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showDeleteConfirmation(DocumentModel document) {
+    final l10n = AppLocalizations.of(context)!;
     showShadDialog(
       context: context,
       builder: (context) => ShadDialog.alert(
-        title: const Text('Удалить документ?'),
+        title: Text(l10n.deleteDocument),
         description: Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Text(
-            'Вы уверены, что хотите удалить "${document.name}"?\nЭто действие нельзя отменить.',
-          ),
+          child: Text(l10n.deleteDocumentDesc),
         ),
         actions: [
           ShadButton.outline(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
+            child: Text(l10n.cancel),
           ),
           ShadButton.destructive(
             onPressed: () {
               _viewModel.deleteDocument(document.id);
               Navigator.pop(context);
             },
-            child: const Text('Удалить'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -384,6 +389,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return LoadingOverlay(
         isLoading: _viewModel.isLoading ||
             _viewModel.isScanning ||
@@ -403,21 +409,22 @@ class _MainScreenState extends State<MainScreen> {
                           children: [
                             ShadButton.ghost(
                               onPressed: _viewModel.toggleSelectionMode,
-                              child: const Text('Отмена'),
+                              child: Text(l10n.cancel),
                             ),
                             Text(
-                              'Выбрано: ${_viewModel.selectedDocumentIds.length}',
+                              l10n.selectedCount(
+                                  _viewModel.selectedDocumentIds.length),
                               style: ShadTheme.of(context).textTheme.h4,
                             ),
                             ShadButton.ghost(
                               onPressed: _viewModel.selectAll,
-                              child: const Text('Все'),
+                              child: Text(l10n.selectAll),
                             ),
                           ],
                         )
                       else
                         AppHeader(
-                          title: 'Pocket Scan',
+                          title: l10n.appTitle,
                           actions: [
                             if (!widget.subscriptionService.isPremiumUser)
                               GestureDetector(
@@ -440,7 +447,7 @@ class _MainScreenState extends State<MainScreen> {
                                       const Icon(LucideIcons.sparkles,
                                           size: 14, color: Colors.white),
                                       const SizedBox(width: 4),
-                                      const Text('Premium'),
+                                      Text(l10n.premium),
                                     ],
                                   ),
                                 ),
@@ -455,7 +462,8 @@ class _MainScreenState extends State<MainScreen> {
                           children: [
                             Expanded(
                               child: ShadInput(
-                                placeholder: const Text('Поиск документов...'),
+                                placeholder: Text(AppLocalizations.of(context)!
+                                    .searchDocumentsHint),
                                 leading:
                                     const Icon(LucideIcons.search, size: 16),
                                 onChanged: (value) =>
@@ -577,7 +585,7 @@ class _MainScreenState extends State<MainScreen> {
           scrollDirection: Axis.horizontal,
           children: [
             _FolderTab(
-              title: 'Все документы',
+              title: AppLocalizations.of(context)!.allDocuments,
               isSelected: _viewModel.selectedFolderId == null,
               onTap: () => _viewModel.selectFolder(null),
             ),
@@ -594,12 +602,12 @@ class _MainScreenState extends State<MainScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 height: 36,
                 onPressed: _showCreateFolderDialog,
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(LucideIcons.plus, size: 16),
-                    SizedBox(width: 4),
-                    Text('Новая папка'),
+                    const Icon(LucideIcons.plus, size: 16),
+                    const SizedBox(width: 4),
+                    Text(AppLocalizations.of(context)!.newFolder),
                   ],
                 ),
               ),
@@ -701,7 +709,7 @@ class _MainScreenState extends State<MainScreen> {
                   _viewModel.moveSelectedToFolder(null);
                   Navigator.pop(context);
                 },
-                child: const Text('Все документы (Без папки)'),
+                child: Text(AppLocalizations.of(context)!.allDocumentsNoFolder),
               ),
               if (_viewModel.folders.isNotEmpty) const Divider(),
               ..._viewModel.folders.map(
@@ -721,11 +729,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context)!;
     return EmptyState(
       icon: LucideIcons.files,
-      title: 'Нет документов',
-      description:
-          'Нажмите кнопку сканирования,\nчтобы добавить первый документ',
+      title: l10n.noDocumentsTitle,
+      description: l10n.noDocumentsDesc,
     );
   }
 
@@ -734,10 +742,11 @@ class _MainScreenState extends State<MainScreen> {
     final theme = ShadTheme.of(context);
 
     if (documents.isEmpty) {
+      final l10n = AppLocalizations.of(context)!;
       return EmptyState(
         icon: LucideIcons.searchX,
-        title: 'Ничего не найдено',
-        description: 'Попробуйте изменить запрос поиска',
+        title: l10n.searchNoResultsTitle,
+        description: l10n.searchNoResultsDesc,
       );
     }
 
@@ -753,7 +762,7 @@ class _MainScreenState extends State<MainScreen> {
                 children: [
                   Text(
                     _viewModel.selectedFolderId == null
-                        ? 'Мои документы'
+                        ? AppLocalizations.of(context)!.homeTitle
                         : _viewModel.folders
                             .firstWhere(
                                 (f) => f.id == _viewModel.selectedFolderId,

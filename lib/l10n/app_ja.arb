@@ -1,0 +1,166 @@
+{
+  "appTitle": "Pixel Scan",
+  "homeTitle": "マイ ドキュメント",
+  "searchHint": "検索...",
+  "searchDocumentsHint": "ドキュメントを検索...",
+  "allDocuments": "すべてのドキュメント",
+  "allDocumentsNoFolder": "すべてのドキュメント (フォルダなし)",
+  "emptyDocuments": "ドキュメントはありません。'+' をタップしてスキャンしてください。",
+  "noDocumentsTitle": "ドキュメントなし",
+  "noDocumentsDesc": "最初のドキュメントを追加するには、\nスキャンボタンをタップしてください",
+  "searchNoResultsTitle": "見つかりませんでした",
+  "searchNoResultsDesc": "検索クエリを変更してみてください",
+  "scanButton": "スキャン",
+  "importGallery": "ギャラリーからインポート",
+  "settings": "設定",
+  "upgradeToPremium": "プレミアムにアップグレード",
+  "premiumActive": "プレミアム有効",
+  "restorePurchases": "購入を復元",
+  "contactSupport": "サポートに連絡",
+  "privacyPolicy": "プライバシーポリシー",
+  "termsOfService": "利用規約",
+  "delete": "削除",
+  "share": "共有",
+  "exportPdf": "PDFをエクスポート",
+  "untitledDocument": "無題のドキュメント",
+  "cancel": "キャンセル",
+  "save": "保存",
+  "done": "完了",
+  "premiumRequired": "プレミアム機能",
+  "premiumRequiredDesc": "この機能にはプレミアム機能への登録が必要です。",
+  "unlimitedScans": "無制限のスキャン＆エクスポート",
+  "noAds": "広告なし",
+  "highQualityExport": "高品質なPDFエクスポート",
+  "subscribe": "今すぐ登録",
+  "paywallTitle": "プレミアムをアンロック",
+  "monthly": "月額",
+  "yearly": "年額",
+  "weekly": "週額",
+  "lifetime": "買い切り",
+  
+  "open": "開く",
+  "rename": "名前を変更",
+  "moveToFolder": "フォルダへ移動",
+  "addDocument": "ドキュメントを追加",
+  "addDocumentDesc": "追加方法を選んでください",
+  "scanWithCamera": "カメラでスキャン",
+  "importPdf": "PDFをインポート",
+  "importImages": "画像をインポート",
+  "renameDocument": "名前変更",
+  "enterNewName": "新しい名前を入力",
+  "documentName": "ドキュメント名",
+  "newFolder": "新しいフォルダ",
+  "enterFolderName": "フォルダ名を入力",
+  "folderName": "フォルダ名",
+  "create": "作成",
+  "moveToFolderTitle": "フォルダへ移動",
+  "chooseFolderDesc": "この文書の移動先フォルダを選択してください",
+  "deleteDocument": "文書を削除",
+  "deleteDocumentDesc": "この文書を削除してもよろしいですか？",
+  "deleteFolder": "フォルダを削除しますか？",
+  "deleteFolderDesc": "フォルダは削除されますが、中にある文書はホーム画面に移動されます。",
+  "noFolder": "フォルダなし（ホーム）",
+  "selectedCount": "選択済み: {count}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "すべて",
+  "premium": "プレミアム",
+  "managePages": "ページの管理",
+  "newDocument": "新しい文書",
+  "scanning": "スキャン中...",
+  "retake": "撮り直す",
+  "scanDocument": "文書をスキャン",
+  "add": "追加",
+  "noScannedImages": "スキャンされた画像がありません",
+  "dragToReorder": "ドラッグして並べ替え",
+  "pageIndex": "ページ {index}",
+  "@pageIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "edited": "編集済み",
+  "clickToEdit": "タップして編集",
+  "cannotDeleteAllPages": "すべてのページを削除することはできません",
+  "deleteSelectedCount": "選択したものを削除 ({count})",
+  "@deleteSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "scanError": "スキャンエラー",
+  "addPagesError": "ページ追加エラー",
+  "saveError": "保存エラー",
+  "photosAdded": "写真が追加されました",
+  "importPhotoError": "画像のインポートエラー",
+  "importPdfError": "PDFのインポートエラー",
+  "pdfImported": "PDFインポート完了",
+  "pdfSaved": "PDF保存完了",
+  "exportError": "エクスポートエラー",
+  "printError": "印刷エラー",
+  "shareError": "共有エラー",
+  "pdfExportSettings": "PDFエクスポート設定",
+  "choosePageFormat": "ページフォーマットと余白を選択",
+  "continueText": "続行",
+  "pageFormat": "ページフォーマット",
+  "margins": "余白",
+  "noMargins": "余白なし (0)",
+  "narrowMargins": "狭い (10)",
+  "defaultMargins": "デフォルト (20)",
+  "cannotDeleteLastPage": "最後のページは削除できません",
+  "deletePage": "ページを削除しますか？",
+  "deletePageDesc": "本当にこのページを削除しますか？",
+  "removeFromFolder": "フォルダから削除",
+  "pagesCount": "{count} ページ",
+  "@pagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallSubtitle": "すべての機能のロックを解除",
+  "subscriptionLoadError": "購読情報の読み込みエラー: {error}",
+  "@subscriptionLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "close": "閉じる",
+  "advancedEditing": "高度な編集",
+  "exportAndPrint": "文書のエクスポートと印刷",
+  "unlimitedStorage": "無制限のストレージ",
+  "cloudSync": "クラウド同期",
+  "prioritySupport": "優先サポート",
+  "subscriptionsUnavailable": "現在購読は利用できません",
+  "freeTrial": "無料トライアル",
+  "weeklySubscription": "週間購読",
+  "monthlySubscription": "月間購読",
+  "annualSubscription": "年間購読",
+  "defaultSubscription": "購読",
+  "weeklyPayment": "毎週支払い",
+  "monthlyPayment": "毎月支払い",
+  "annualPayment": "年一回支払い",
+  "premiumAccess": "プレミアム",
+  "purchaseFailed": "購入に失敗しました",
+  "errorWithDetail": "エラー: {error}",
+  "@errorWithDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noActiveSubscriptions": "有効な購読は見つかりませんでした"
+}
