@@ -24,6 +24,8 @@ dependencies:
   pdfx: ^2.6.0
   shadcn_ui: ^0.43.1
   image: ^4.5.4
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
