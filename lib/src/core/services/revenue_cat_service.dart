@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io' show Platform;
 
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -7,8 +8,10 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import '../models/subscription_model.dart';
 
 class RevenueCatService {
-  static const String _apiKey =
-      'YOUR_REVENUE_CAT_API_KEY'; // Замените на ваш API ключ
+  static const String _appleApiKey =
+      'YOUR_APPLE_API_KEY'; // Замените на ваш Apple API ключ
+  static const String _googleApiKey =
+      'YOUR_GOOGLE_API_KEY'; // Замените на ваш Google API ключ
 
   // Product IDs для ваших подписок
   static const String weeklyProductId = 'weekly_premium';
@@ -31,8 +34,15 @@ class RevenueCatService {
     try {
       await Purchases.setLogLevel(LogLevel.debug);
 
-      PurchasesConfiguration configuration = PurchasesConfiguration(_apiKey);
-      await Purchases.configure(configuration);
+      if (Platform.isIOS) {
+        PurchasesConfiguration configuration =
+            PurchasesConfiguration(_appleApiKey);
+        await Purchases.configure(configuration);
+      } else if (Platform.isAndroid) {
+        PurchasesConfiguration configuration =
+            PurchasesConfiguration(_googleApiKey);
+        await Purchases.configure(configuration);
+      }
 
       // Добавляем слушатель изменений подписки
       Purchases.addCustomerInfoUpdateListener(_handleCustomerInfoUpdate);
